@@ -14,24 +14,25 @@ const path = require("path")
 // }
 
 
-module.exports = async (options) => {
+module.exports = async (config) => {
 
   await Promise.all([
-    ensureDir(path.join(options.appDest)),
-    ensureDir(path.join(options.appDest))
+    ensureDir(path.join(config.appDest)),
+    ensureDir(path.join(config.nginxDest))
   ])
+
 
   await Promise.all([
     Promise.all([
-      ensureDir(path.join(options.appDest, "master")),
-      ensureDir(path.join(options.appDest, "dev"))
+      ensureDir(path.join(config.appDest, "master")),
+      ensureDir(path.join(config.appDest, "dev"))
     ]).then(() => Promise.all([
-      ensureDirEmpty(path.join(options.appDest, "master", options.name)),
-      ensureDirEmpty(path.join(options.appDest, "dev", options.name)),
+      ensureDirEmpty(path.join(config.appDest, "master", config.name)),
+      ensureDirEmpty(path.join(config.appDest, "dev", config.name)),
     ])),
 
-    ensureFileEmpty(path.join(options.nginxConfDestination, options.domain)),
-    ensureFileEmpty(path.join(options.nginxConfDestination, `dev.${options.domain}`))
+    ensureFileEmpty(path.join(config.nginxDest, config.domain)),
+    ensureFileEmpty(path.join(config.nginxDest, `dev.${config.domain}`))
   ])
 
   

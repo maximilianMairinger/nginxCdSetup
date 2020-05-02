@@ -38,32 +38,37 @@ const openCharSeq = "$["
 const closeCharSeq = "]"
 const escapeCharSeq = "$"
 
-function resolveTemplate (source, replaceIndex) {
-  let res = source
+function resolveTemplate (template, _varIndex) {
+  let varIndex = {}
+  for (const key in _varIndex) {
+    varIndex[key] = _varIndex[key] + ""
+  }
+
+  let res = template
   let a = 0
 
   while (true) {
-    let localStart = source.indexOf(openCharSeq)
+    let localStart = template.indexOf(openCharSeq)
     let start = localStart + a
 
     if (localStart === -1) break
-    if (source[localStart-1] === escapeCharSeq) {
+    if (template[localStart-1] === escapeCharSeq) {
       res = spliceString(res, start, 1, "")
-      source = source.substr(localStart + 1)
+      template = template.substr(localStart + 1)
       a = start
       continue
     }
-    let localEnd = localStart + source.substr(localStart).indexOf(closeCharSeq) + 1
+    let localEnd = localStart + template.substr(localStart).indexOf(closeCharSeq) + 1
     if (localEnd === -1) break
     let end = localEnd + a
-    let inner = source.substring(localStart + openCharSeq.length, localEnd - closeCharSeq.length)
+    let inner = template.substring(localStart + openCharSeq.length, localEnd - closeCharSeq.length)
     let key = stripSpaceFromLeftAndRight(inner)
-    let insert = replaceIndex[key] === undefined ? key : replaceIndex[key]
+    let insert = varIndex[key] === undefined ? key : varIndex[key]
     let omit = end - start
     res = spliceString(res, start, omit, insert)
     
 
-    source = source.substring(localEnd)
+    template = template.substring(localEnd)
 
     a = end - (omit - insert.length)
 

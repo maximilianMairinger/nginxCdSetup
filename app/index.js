@@ -1,7 +1,6 @@
 const yargs = require("yargs")
 const args = yargs.argv
 const detectPort = require("detect-port")
-const { promises: fs } = require("fs")
 const setup = require("./setup")
 const path = require("path")
 const clone = require("fast-copy")
@@ -11,7 +10,7 @@ const startPort = 5000
 
 
 
-const masterOptions = {
+const masterConfig = {
   nginxDest: path.resolve(args.nginxConfDestination),
   appDest: path.resolve(args.appDestination),
   domain: args.domain,
@@ -19,34 +18,38 @@ const masterOptions = {
   branch: "master"
 }
 
-const devOptions = clone(masterOptions);
-devOptions.domain = `dev.${devOptions.domain}`
-devOptions.branch = "dev"
+
+const devConfig = clone(masterConfig);
+devConfig.domain = `dev.${devConfig.domain}`
+devConfig.branch = "dev";
+
+
+
 
 (async () => {
-  
 
-  
-  
 
-  let setupProm = setup(masterOptions).then(() => {
+
+
+
+  let setupProm = setup(masterConfig).then(() => {
     console.log("Setup done")
   })
-  let portProm1 = detectPort(startPort).then((port) => {
-    masterOptions.port = port
-    console.log("Port found: " + port)
-  })
-  let portProm2 = detectPort(startPort).then((port) => {
-    devOptions.port = port
-    console.log("Port found: " + port)
+  let portProm = detectPort(startPort).then((portMaster) => {
+    masterConfig.port = portMaster
+    return detectPort(portMaster+1).then((portDev) => {
+      devConfig.port = portDev
+      console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
+    })
   })
   
+  
 
-  await Promise.all([setupProm, portProm1, portProm2])
+  await Promise.all([setupProm, portProm])
 
 
-  let nginxSetupProm = createNginxConf(masterOptions, devOptions)
-  let appSetupProm = createAppConf(masterOptions, devOptions)
+  let nginxSetupProm = createNginxConf(masterConfig, devConfig)
+  let appSetupProm = createAppConf(masterConfig, devConfig)
   
 
   await Promise.all([nginxSetupProm, appSetupProm])
@@ -54,6 +57,8 @@ devOptions.branch = "dev"
 
 
 })()
+
+
 
 
 

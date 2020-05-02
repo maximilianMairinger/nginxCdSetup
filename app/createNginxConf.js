@@ -4,14 +4,14 @@ const resolveTemplate = require("./resolveTemplate")
 
 
 
-module.exports = (masterOptions, devOptions) => {
-  let masterConfig = resolveTemplate(configFileContent, masterOptions)
-  let devConfig = resolveTemplate(configFileContent, devOptions)
+module.exports = (masterConfig, devConfig) => {
+  let masterConfFile = resolveTemplate(configFileContent, masterConfig)
+  let devConfFile = resolveTemplate(configFileContent, devConfig)
   
 
 
-  
   console.log(devConfig)
+  console.log(devConfFile)
   
 
 
@@ -20,7 +20,7 @@ module.exports = (masterOptions, devOptions) => {
 
 
 const configFileContent = `
-upstream nodejs_upstream$[ port ] {
+upstream nodejs_upstream_$[ port ] {
   server 127.0.0.1:$[ port ];
   keepalive 64;
 }
