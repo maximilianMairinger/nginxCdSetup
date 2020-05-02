@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
+    "start": "node app/index",
     "test": "node createTestEnv.js && npm start -- --nginxConfDestination ./test_out/nginx --appDestination ./test_out/app --name labAuth --domain labauth.maximilian.mairinger.com"
   },
   "keywords": [],
