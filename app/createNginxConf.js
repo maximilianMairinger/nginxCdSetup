@@ -22,9 +22,8 @@ module.exports = async (masterConfig, devConfig) => {
     fs.writeFile(path.join(devConfig.nginxDest, devConfig.domain), resolveTemplate(configFileContent, devConfig))
   ])
 
-
-
-
+  console.log("nginx reload")
+  shell.exec("service nginx reload")
 }
 
 
