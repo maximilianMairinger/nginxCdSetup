@@ -1,18 +1,28 @@
 const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./util")
 const resolveTemplate = require("./resolveTemplate")
+const { promises: fs } = require("fs")
+const path = require("path")
+
+const shell = require("shelljs")
 
 
+// const masterConfig = {
+//   nginxDest: path.resolve(args.nginxConfDestination),
+//   appDest: path.resolve(args.appDestination),
+//   domain: args.domain,
+//   name: args.name,
+//   branch: "master"
+// }
+
+module.exports = async (masterConfig, devConfig) => {
 
 
-module.exports = (masterConfig, devConfig) => {
-  let masterConfFile = resolveTemplate(configFileContent, masterConfig)
-  let devConfFile = resolveTemplate(configFileContent, devConfig)
-  
+  await Promise.all([
+    fs.writeFile(path.join(masterConfig.nginxDest, masterConfig.domain), resolveTemplate(configFileContent, masterConfig)),
+    fs.writeFile(path.join(devConfig.nginxDest, devConfig.domain), resolveTemplate(configFileContent, devConfig))
+  ])
 
 
-  console.log(devConfig)
-  console.log(devConfFile)
-  
 
 
 }
