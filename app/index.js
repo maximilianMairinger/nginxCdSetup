@@ -6,6 +6,8 @@ const path = require("path")
 const clone = require("fast-copy")
 const createNginxConf = require("./createNginxConf")
 const createAppConf = require("./createAppConf")
+const xrray = require("xrray")
+xrray(Array)
 const startPort = 5000
 
 
@@ -15,7 +17,8 @@ const masterConfig = {
   appDest: path.resolve(args.appDestination),
   domain: args.domain,
   name: args.name,
-  branch: "master"
+  branch: "master",
+  gtihubUsername: args.githubUsername
 }
 
 
