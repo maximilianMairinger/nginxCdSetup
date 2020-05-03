@@ -18,6 +18,7 @@ module.exports = async (masterConfig, devConfig) => {
   configs.ea((conf) => {
     shell.cd(path.join(conf.appDest, conf.branch))
     shell.exec(`git clone git@github.com:${conf.githubUsername}/${conf.name}`)
+    shell.exec(`cd ${conf.name}`)
     shell.exec(`git checkout ${conf.branch}`)
   })
 
