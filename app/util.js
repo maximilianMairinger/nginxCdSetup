@@ -32,7 +32,7 @@ async function isDirEmpty(dir) {
 
 async function ensureDirEmpty(dir) {
   if (await doesFileExist(dir)) {
-    if (!(await isDirEmpty())) throw new Error(dir + " is not an empty directory")
+    if (!(await isDirEmpty(dir))) throw new Error(dir + " is not an empty directory")
   }
   else {
     await fs.mkdir(dir)
