@@ -18,7 +18,7 @@ const masterConfig = {
   domain: args.domain,
   name: args.name,
   branch: "master",
-  gtihubUsername: args.githubUsername
+  githubUsername: args.githubUsername
 }
 
 
