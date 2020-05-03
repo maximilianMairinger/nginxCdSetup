@@ -19,8 +19,12 @@ module.exports = async (masterConfig, devConfig) => {
   
   let proms = []
 
+  let sitesAvailable = path.join(masterConfig.nginxDest, "sites-available")
+  let sitesEnabled = path.join(masterConfig.nginxDest, "sites-enabled")
+
   configs.ea((conf) => {
-    proms.add(fs.writeFile(path.join(conf.nginxDest, conf.domain), resolveTemplate(configFileContent, conf)))
+    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
+
   })
   
   await Promise.all(proms)
@@ -28,8 +32,9 @@ module.exports = async (masterConfig, devConfig) => {
 
   console.log("ssl")
   configs.ea((conf) => {
-    shell.cd(path.join(conf.nginxDest, conf.domain))
+    shell.cd(path.join(sitesAvailable, conf.domain))
     shell.exec(`certbot --nginx -d ${conf.domain} --no-redirect`)
+    shell.exec(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`)
   })
 
   console.log("nginx reload")
