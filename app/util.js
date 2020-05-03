@@ -26,7 +26,7 @@ async function clearDir(dir) {
 }
 
 async function isDirEmpty(dir) {
-  const files = await fs.promises.readdir(dir);
+  const files = await fs.readdir(dir);
   return files.length === 0;
 }
 
