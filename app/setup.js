@@ -31,8 +31,20 @@ module.exports = async (config) => {
       ensureDirEmpty(path.join(config.appDest, "dev", config.name)),
     ])),
 
-    ensureFileEmpty(path.join(config.nginxDest, config.domain)),
-    ensureFileEmpty(path.join(config.nginxDest, `dev.${config.domain}`))
+    Promise.all([
+      ensureDir(path.join(config.nginxDest, "sites-enabled")),
+      ensureDir(path.join(config.nginxDest, "sites-available")),
+    ]).then(() => Promise.all([
+      ensureFileEmpty(path.join(config.nginxDest, "sites-enabled", config.domain)),
+      ensureFileEmpty(path.join(config.nginxDest, "sites-enabled", `dev.${config.domain}`)),
+      ensureFileEmpty(path.join(config.nginxDest, "sites-available", config.domain)),
+      ensureFileEmpty(path.join(config.nginxDest, "sites-available", `dev.${config.domain}`))
+    ]))
+
+    
+
+
+    
   ])
 
   
