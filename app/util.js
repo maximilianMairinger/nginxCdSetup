@@ -41,7 +41,7 @@ async function ensureDirEmpty(dir) {
 
 async function ensureFileEmpty(file) {
   if (await doesFileExist(file)) {
-    if ((await fs.read(file)).length !== 0) throw new Error(file + " already exsists")
+    if ((await fs.readFile(file)).length !== 0) throw new Error(file + " already exsists")
   }
 }
 
