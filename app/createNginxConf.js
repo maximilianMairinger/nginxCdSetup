@@ -16,18 +16,13 @@ const shell = require("shelljs")
 
 module.exports = async (masterConfig, devConfig) => {
   const configs = [masterConfig, devConfig]
+
   
-  let proms = []
+  
+  
 
   let sitesAvailable = path.join(masterConfig.nginxDest, "sites-available")
   let sitesEnabled = path.join(masterConfig.nginxDest, "sites-enabled")
-
-  configs.ea((conf) => {
-    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
-
-  })
-  
-  await Promise.all(proms)
 
 
   console.log("ssl")
@@ -36,6 +31,20 @@ module.exports = async (masterConfig, devConfig) => {
     shell.exec(`certbot --nginx -d ${conf.domain} --no-redirect`)
     shell.exec(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`)
   })
+
+
+
+  configs.ea((conf) => {
+    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
+
+  })
+
+  let proms = []
+  
+  await Promise.all(proms)
+
+
+  
 
   console.log("nginx reload")
   shell.exec("service nginx reload")
