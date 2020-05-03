@@ -43,9 +43,9 @@ module.exports = async (masterConfig, devConfig) => {
 
   proms = []
 
-  configs.ea((conf) => {
-    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
-  })
+  // configs.ea((conf) => {
+  //   proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
+  // })
 
 
   await Promise.all(proms)

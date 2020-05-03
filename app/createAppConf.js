@@ -15,12 +15,16 @@ const path = require("path")
 module.exports = async (masterConfig, devConfig) => {
   let configs = [masterConfig, devConfig]
 
+  console.log("started app")
+
   configs.ea((conf) => {
     shell.cd(path.join(conf.appDest, conf.branch))
     shell.exec(`git clone git@github.com:${conf.githubUsername}/${conf.name}`)
     shell.exec(`cd ${conf.name}`)
     shell.exec(`git checkout ${conf.branch}`)
   })
+
+  console.log("clone done")
 
   let proms = []
   configs.ea((conf) => {
@@ -29,13 +33,15 @@ module.exports = async (masterConfig, devConfig) => {
 
   await Promise.all(proms)
 
+  console.log("write ecosystem done")
+
   configs.ea((conf) => {
     shell.cd(path.join(conf.appDest, conf.branch))
     shell.exec(`source ~/.nvm/nvm.sh && nvm use 14.0.0 && npm i && npm run build --if-present && pm2 start ecosystem.config.js`)
   })
   
 
-  
+  console.log("started pm2")
   
 
 }
