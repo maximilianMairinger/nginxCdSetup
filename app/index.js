@@ -55,8 +55,6 @@ devConfig.branch = "dev";
   await createNginxConf(masterConfig, devConfig)
   await createAppConf(masterConfig, devConfig)
   
-
-  await Promise.all([nginxSetupProm, appSetupProm])
   
 
 
