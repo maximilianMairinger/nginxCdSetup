@@ -36,9 +36,15 @@ module.exports = async (masterConfig, devConfig) => {
     shell.exec(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`)
   })
 
+  console.log("linked to sites-enabled")
+
+  shell.cd(path.join(sitesAvailable))
   configs.ea((conf) => {
-    shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
+    console.log("certbot", conf.domain)
+    shell.exec(`certbot --nginx -d ${conf.domain} --redirect`)
   })
+
+  
 
 
   proms = []
