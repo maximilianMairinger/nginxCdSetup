@@ -30,7 +30,7 @@ module.exports = async (masterConfig, devConfig) => {
 
   configs.ea((conf) => {
     shell.cd(path.join(conf.appDest, conf.branch))
-    shell.exec(`pm2 start ecosystem.config.js`)
+    shell.exec(`source ~/.nvm/nvm.sh && nvm use 14.0.0 && npm i && npm run build --if-present && pm2 start ecosystem.config.js`)
   })
   
 
