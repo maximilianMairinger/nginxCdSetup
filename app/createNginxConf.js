@@ -15,7 +15,7 @@ const shell = require("shelljs")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  const configs = [masterConfig, /*devConfig*/]
+  const configs = [masterConfig/*, devConfig*/]
 
   
   
