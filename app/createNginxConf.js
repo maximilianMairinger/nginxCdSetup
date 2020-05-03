@@ -54,6 +54,7 @@ module.exports = async (masterConfig, devConfig) => {
 
   console.log("nginx reload")
   shell.exec("service nginx reload")
+  console.log("done nginx reload")
 }
 
 const preConfigFileContent = `

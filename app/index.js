@@ -51,8 +51,9 @@ devConfig.branch = "dev";
   await Promise.all([setupProm, portProm])
 
 
-  let nginxSetupProm = createNginxConf(masterConfig, devConfig)
-  let appSetupProm = createAppConf(masterConfig, devConfig)
+  // must be synchronous (because shell relies on current cd)
+  await createNginxConf(masterConfig, devConfig)
+  await createAppConf(masterConfig, devConfig)
   
 
   await Promise.all([nginxSetupProm, appSetupProm])
