@@ -31,36 +31,26 @@ devConfig.branch = "dev";
 
 (async () => {
 
-
-
-
-
-  try {
-    let setupProm = setup(masterConfig).then(() => {
-      console.log("Setup done")
+  let setupProm = setup(masterConfig).then(() => {
+    console.log("Setup done")
+  })
+  let portProm = detectPort(startPort).then((portMaster) => {
+    masterConfig.port = portMaster
+    return detectPort(portMaster+1).then((portDev) => {
+      devConfig.port = portDev
+      console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
     })
-    let portProm = detectPort(startPort).then((portMaster) => {
-      masterConfig.port = portMaster
-      return detectPort(portMaster+1).then((portDev) => {
-        devConfig.port = portDev
-        console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
-      })
-    })
-    
-    
-  
-    await Promise.all([setupProm, portProm])
+  })
   
   
-    // must be synchronous (because shell relies on current cd)
-    await createNginxConf(masterConfig, devConfig)
-    await createAppConf(masterConfig, devConfig)
-  }
-  catch(e) {
-    console.log(e)
-  }
-  
-  
+
+  await Promise.all([setupProm, portProm])
+
+
+  // must be synchronous (because shell relies on current cd)
+  await createNginxConf(masterConfig, devConfig)
+  await createAppConf(masterConfig, devConfig)
+
 
 
 })()

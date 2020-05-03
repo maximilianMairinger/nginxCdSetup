@@ -15,7 +15,7 @@ const shell = require("shelljs")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  const configs = [devConfig, masterConfig]
+  const configs = [masterConfig, devConfig]
 
   
   
@@ -39,10 +39,17 @@ module.exports = async (masterConfig, devConfig) => {
   console.log("linked to sites-enabled")
 
   shell.cd(path.join(sitesAvailable))
-  configs.ea((conf) => {
-    console.log("certbot", conf.domain)
-    shell.exec(`certbot --nginx -d ${conf.domain} --redirect`)
-  })
+  try {
+    configs.ea((conf) => {
+      console.log("certbot", conf.domain)
+      shell.exec(`certbot --nginx -d ${conf.domain} --redirect`)
+    })
+  }
+  catch (e) {
+    console.log("Unable to issue certificate, maybe you hit a rate limit")
+    console.log(e.toString())
+  }
+  
 
   
 
