@@ -42,7 +42,7 @@ module.exports = async (masterConfig, devConfig) => {
   try {
     configs.ea((conf) => {
       console.log("certbot", conf.domain)
-      shell.exec(`certbot --nginx -d ${conf.domain} --redirect`)
+      shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
     })
   }
   catch (e) {
