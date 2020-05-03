@@ -15,7 +15,7 @@ const shell = require("shelljs")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  const configs = [masterConfig, devConfig]
+  const configs = [devConfig, masterConfig]
 
   
   
@@ -24,33 +24,65 @@ module.exports = async (masterConfig, devConfig) => {
   let sitesAvailable = path.join(masterConfig.nginxDest, "sites-available")
   let sitesEnabled = path.join(masterConfig.nginxDest, "sites-enabled")
 
+  let proms = []
 
-  console.log("ssl")
   configs.ea((conf) => {
-    shell.cd(path.join(sitesAvailable, conf.domain))
-    shell.exec(`certbot --nginx -d ${conf.domain} --no-redirect`)
+    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContent, conf)))
+  })
+
+  await Promise.all(proms)
+
+  configs.ea((conf) => {
     shell.exec(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`)
   })
 
+  configs.ea((conf) => {
+    shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
+  })
 
+
+  proms = []
 
   configs.ea((conf) => {
     proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
-
   })
 
-  let proms = []
-  
+
   await Promise.all(proms)
 
 
-  
 
   console.log("nginx reload")
   shell.exec("service nginx reload")
 }
 
+const preConfigFileContent = `
+upstream nodejs_upstream_$[ port ] {
+  server 127.0.0.1:$[ port ];
+  keepalive 64;
+}
 
+server {
+
+  listen 80;
+                 
+  server_name $[ domain ];
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $http_host;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://nodejs_upstream_$[ port ]/;
+    proxy_redirect off;
+    proxy_read_timeout 240s;
+  }
+
+}`
 
 const configFileContent = `
 upstream nodejs_upstream_$[ port ] {
