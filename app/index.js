@@ -13,8 +13,8 @@ const startPort = 5000
 
 
 const masterConfig = {
-  nginxDest: path.resolve(args.nginxConfDestination) || "/etc/nginx",
-  appDest: path.resolve(args.appDestination) || "/var/www/html",
+  nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
+  appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
   domain: args.domain,
   name: args.name,
   branch: "master",
