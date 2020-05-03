@@ -13,7 +13,7 @@ const path = require("path")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  let configs = [masterConfig, devConfig]
+  let configs = [masterConfig, /*devConfig*/]
 
   console.log("started app")
 
