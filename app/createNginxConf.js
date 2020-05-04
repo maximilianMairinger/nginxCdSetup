@@ -15,7 +15,7 @@ const shell = require("shelljs")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  const configs = [masterConfig/*, devConfig*/]
+  const configs = [masterConfig, devConfig]
 
   
   
@@ -39,11 +39,13 @@ module.exports = async (masterConfig, devConfig) => {
   console.log("linked to sites-enabled")
 
   shell.cd(path.join(sitesAvailable))
+  let sslOk = false
   try {
     // configs.ea((conf) => {
     //   console.log("certbot", conf.domain)
     //   shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
     // })
+    // sslOk = true
   }
   catch (e) {
     console.log("Unable to issue certificate, maybe you hit a rate limit")
@@ -52,16 +54,18 @@ module.exports = async (masterConfig, devConfig) => {
   
 
   
+  if (sslOk) {
+    proms = []
 
+    configs.ea((conf) => {
+      proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
+    })
+  
+  
+    await Promise.all(proms)
+  }
 
-  proms = []
-
-  // configs.ea((conf) => {
-  //   proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
-  // })
-
-
-  await Promise.all(proms)
+  
 
 
 
@@ -69,6 +73,7 @@ module.exports = async (masterConfig, devConfig) => {
   shell.exec("service nginx reload")
   console.log("done nginx reload")
 }
+
 
 const preConfigFileContent = `
 upstream nodejs_upstream_$[ port ] {

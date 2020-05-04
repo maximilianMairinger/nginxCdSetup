@@ -13,7 +13,7 @@ const path = require("path")
 // }
 
 module.exports = async (masterConfig, devConfig) => {
-  let configs = [masterConfig/*, devConfig*/]
+  let configs = [masterConfig, devConfig]
 
   console.log("started app")
 
@@ -39,8 +39,6 @@ module.exports = async (masterConfig, devConfig) => {
     shell.cd(path.join(conf.appDest, conf.branch, conf.name))
     shell.exec(`npm i && npm run build --if-present && pm2 start ecosystem.config.js`)
   })
-
-  // fix workflow, now CD can start
   
 
   console.log("started pm2")
