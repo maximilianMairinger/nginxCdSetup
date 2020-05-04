@@ -41,10 +41,10 @@ module.exports = async (masterConfig, devConfig) => {
   shell.cd(path.join(sitesAvailable))
   let sslOk = false
   try {
-    configs.ea((conf) => {
-      console.log("certbot", conf.domain)
-      shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
-    })
+    
+    console.log("certbot", masterConfig.domain, devConfig.domain)
+    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect --keep`)
+    
     sslOk = true
   }
   catch (e) {
