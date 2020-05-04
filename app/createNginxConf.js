@@ -41,11 +41,11 @@ module.exports = async (masterConfig, devConfig) => {
   shell.cd(path.join(sitesAvailable))
   let sslOk = false
   try {
-    // configs.ea((conf) => {
-    //   console.log("certbot", conf.domain)
-    //   shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
-    // })
-    // sslOk = true
+    configs.ea((conf) => {
+      console.log("certbot", conf.domain)
+      shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
+    })
+    sslOk = true
   }
   catch (e) {
     console.log("Unable to issue certificate, maybe you hit a rate limit")
