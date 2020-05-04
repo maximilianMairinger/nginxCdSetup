@@ -43,7 +43,7 @@ module.exports = async (masterConfig, devConfig) => {
   try {
     
     console.log("certbot", masterConfig.domain, devConfig.domain)
-    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect`)
+    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect --reinstall`)
     
     sslOk = true
   }
@@ -56,6 +56,8 @@ module.exports = async (masterConfig, devConfig) => {
   
   if (sslOk) {
     proms = []
+
+    // This breaks
 
     // configs.ea((conf) => {
     //   proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
