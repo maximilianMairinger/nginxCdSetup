@@ -26,6 +26,16 @@ module.exports = async (masterConfig, devConfig) => {
 
   console.log("clone done")
 
+  
+
+  configs.ea((conf) => {
+    shell.cd(path.join(conf.appDest, conf.branch, conf.name))
+    shell.exec(`npm i && npm run build --if-present`)
+  })
+
+  console.log("Installing and building done")
+
+
   let proms = []
   configs.ea((conf) => {
     proms.add(fs.writeFile(path.join(conf.appDest, conf.branch, conf.name, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf)))
@@ -37,9 +47,8 @@ module.exports = async (masterConfig, devConfig) => {
 
   configs.ea((conf) => {
     shell.cd(path.join(conf.appDest, conf.branch, conf.name))
-    shell.exec(`npm i && npm run build --if-present && pm2 start ecosystem.config.js`)
+    shell.exec(`pm2 start ecosystem.config.js`)
   })
-  
 
   console.log("started pm2")
   
