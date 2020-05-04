@@ -40,10 +40,10 @@ module.exports = async (masterConfig, devConfig) => {
 
   shell.cd(path.join(sitesAvailable))
   try {
-    configs.ea((conf) => {
-      console.log("certbot", conf.domain)
-      shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
-    })
+    // configs.ea((conf) => {
+    //   console.log("certbot", conf.domain)
+    //   shell.exec(`certbot --nginx -d ${conf.domain} --redirect --keep`)
+    // })
   }
   catch (e) {
     console.log("Unable to issue certificate, maybe you hit a rate limit")
