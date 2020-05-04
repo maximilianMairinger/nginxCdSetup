@@ -43,7 +43,7 @@ module.exports = async (masterConfig, devConfig) => {
   try {
     
     console.log("certbot", masterConfig.domain, devConfig.domain)
-    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect --keep`)
+    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect`)
     
     sslOk = true
   }
