@@ -18,7 +18,10 @@ module.exports = async (masterConfig, devConfig) => {
   console.log("started app")
 
   configs.ea((conf) => {
-    shell.exec(`cd ${path.join(conf.appDest, conf.branch)} && git clone git@github.com:${conf.githubUsername}/${conf.name} && cd ${conf.name} && git checkout ${conf.branch}`)
+    shell.cd(path.join(conf.appDest, conf.branch))
+    shell.exec(`git clone git@github.com:${conf.githubUsername}/${conf.name}`)
+    shell.exec(`cd ${conf.name}`)
+    shell.exec(`git checkout ${conf.branch}`)
   })
 
   console.log("clone done")
