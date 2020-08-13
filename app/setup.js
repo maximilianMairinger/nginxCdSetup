@@ -1,4 +1,4 @@
-const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./util")
+const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./fsUtil")
 const path = require("path") 
 
 
@@ -24,11 +24,10 @@ module.exports = async (config) => {
 
   await Promise.all([
     Promise.all([
-      ensureDir(path.join(config.appDest, "master")),
-      ensureDir(path.join(config.appDest, "dev"))
+      ensureDir(path.join(config.appDest, config.name)),
     ]).then(() => Promise.all([
-      ensureDirEmpty(path.join(config.appDest, "master", config.name)),
-      ensureDirEmpty(path.join(config.appDest, "dev", config.name)),
+      ensureDirEmpty(path.join(config.appDest, config.name, "master")),
+      ensureDirEmpty(path.join(config.appDest, config.name, "dev"))
     ])),
 
     Promise.all([

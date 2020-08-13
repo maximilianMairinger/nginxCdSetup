@@ -1,9 +1,11 @@
-const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./util")
-const resolveTemplate = require("./resolveTemplate")
+const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./fsUtil")
+const resolveTemplate = require("josm-interpolate-string")
 const { promises: fs } = require("fs")
 const path = require("path")
+const xrray = require("xrray")
+xrray(Array)
 
-const shell = require("shelljs")
+const $ = require("./shell")
 
 
 // const masterConfig = {
@@ -12,14 +14,18 @@ const shell = require("shelljs")
 //   domain: args.domain,
 //   name: args.name,
 //   branch: "master"
+//   hash: "commithash",
+//   githubUsername: "",
+//   port: 6500
 // }
 
-module.exports = async (masterConfig, devConfig) => {
-  const configs = [masterConfig, devConfig]
+module.exports = async (configs, progressCb) => {
+  if (!(configs instanceof Array)) configs = [configs]
+  const log = progressCb ? progressCb : console.log.bind(console);
 
   
   
-  
+  log(`Adding and linking entry to nginx routing registry...`)
 
   let sitesAvailable = path.join(masterConfig.nginxDest, "sites-available")
   let sitesEnabled = path.join(masterConfig.nginxDest, "sites-enabled")
@@ -33,47 +39,25 @@ module.exports = async (masterConfig, devConfig) => {
   await Promise.all(proms)
 
   configs.ea((conf) => {
-    shell.exec(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`)
+    $(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`, `Unable to link ${conf.domain}.`)
   })
 
-  console.log("linked to sites-enabled")
+  log(`Obtaining ssl certificate...`)
 
-  shell.cd(path.join(sitesAvailable))
-  let sslOk = false
-  try {
-    
-    console.log("certbot", masterConfig.domain, devConfig.domain)
-    shell.exec(`certbot --nginx -d ${masterConfig.domain} -d ${devConfig.domain} --redirect --reinstall`)
-    
-    sslOk = true
-  }
-  catch (e) {
-    console.log("Unable to issue certificate, maybe you hit a rate limit")
-    console.log(e.toString())
-  }
+  $(`cd ${path.join(sitesAvailable)}`)
+
+  let domainCliParam = ""
+  configs.ea((conf) => {
+    domainCliParam += `-d ${conf.domain} `
+  })
+
+
+  $(`certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
   
 
-  
-  if (sslOk) {
-    proms = []
+  log(`Reloading nginx...`)
 
-    // This breaks
-
-    // configs.ea((conf) => {
-    //   proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(configFileContent, conf)))
-    // })
-  
-  
-    await Promise.all(proms)
-  }
-
-  
-
-
-
-  console.log("nginx reload")
-  shell.exec("service nginx reload")
-  console.log("done nginx reload")
+  $(`service nginx reload`, `Reload of nginx failed`)
 }
 
 
@@ -105,53 +89,53 @@ server {
 
 }`
 
-const configFileContent = `
-upstream nodejs_upstream_$[ port ] {
-  server 127.0.0.1:$[ port ];
-  keepalive 64;
-}
+// const configFileContent = `
+// upstream nodejs_upstream_$[ port ] {
+//   server 127.0.0.1:$[ port ];
+//   keepalive 64;
+// }
 
-server {
+// server {
                  
-  server_name $[ domain ];
+//   server_name $[ domain ];
 
-  location / {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header Host $http_host;
+//   location / {
+//     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+//     proxy_set_header X-Real-IP $remote_addr;
+//     proxy_set_header Host $http_host;
 
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+//     proxy_http_version 1.1;
+//     proxy_set_header Upgrade $http_upgrade;
+//     proxy_set_header Connection "upgrade";
 
-    proxy_pass http://nodejs_upstream_$[ port ]/;
-    proxy_redirect off;
-    proxy_read_timeout 240s;
-  }
-
-
-  listen [::]:443 http2 ssl; # managed by Certbot
-  listen 443 http2 ssl; # managed by Certbot
-  ssl_certificate /etc/letsencrypt/live/$[ domain ]/fullchain.pem; # managed by Certbot
-  ssl_certificate_key /etc/letsencrypt/live/$[ domain ]/privkey.pem; # managed by Certbot
-  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+//     proxy_pass http://nodejs_upstream_$[ port ]/;
+//     proxy_redirect off;
+//     proxy_read_timeout 240s;
+//   }
 
 
-}
+//   listen [::]:443 http2 ssl; # managed by Certbot
+//   listen 443 http2 ssl; # managed by Certbot
+//   ssl_certificate /etc/letsencrypt/live/$[ domain ]/fullchain.pem; # managed by Certbot
+//   ssl_certificate_key /etc/letsencrypt/live/$[ domain ]/privkey.pem; # managed by Certbot
+//   include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+//   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 
-
-server {
-  if ($host = $[ domain ]) {
-    return 301 https://$host$request_uri;
-  } # managed by Certbot
+// }
 
 
 
-  listen 80;
-  listen [::]:80;
+// server {
+//   if ($host = $[ domain ]) {
+//     return 301 https://$host$request_uri;
+//   } # managed by Certbot
+
+
+
+//   listen 80;
+//   listen [::]:80;
               
-  server_name $[ domain ];
-  return 404; # managed by Certbot
-}`
+//   server_name $[ domain ];
+//   return 404; # managed by Certbot
+// }`

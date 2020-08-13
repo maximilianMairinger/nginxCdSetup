@@ -47,9 +47,16 @@ devConfig.branch = "dev";
   await Promise.all([setupProm, portProm])
 
 
-  // must be synchronous (because shell relies on current cd)
-  await createNginxConf(masterConfig, devConfig)
-  await createAppConf(masterConfig, devConfig)
+  try {
+    // must be synchronous (because shell relies on current cd)
+    await createAppConf([masterConfig, devConfig])
+    await createNginxConf([masterConfig, devConfig])
+    console.log("Done")
+  } catch (e) {
+    console.log("Error: " + e.message)
+    console.log("Cmd: " + e.cmd)
+    console.log("Stderr: " + e.stderr)
+  }
 
 
 
