@@ -1,11 +1,12 @@
 {
-  "name": "test",
+  "name": "nginxCdSetup",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node app/index",
-    "test": "node createTestEnv.js && npm start -- --nginxConfDestination ./test_out/nginx --appDestination ./test_out/app --name testOut --domain testout.maximilian.mairinger.com --githubUsername maximilianMairinger"
+    "build": "rollup --config rollup.node.prod.config.js",
+    "test": "npm run build && node createTestEnv.js && npm start -- --nginxConfDestination ./test_out/nginx --appDestination ./test_out/app --name testOut --domain testout.maximilian.mairinger.com --githubUsername maximilianMairinger"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +16,13 @@
     "fast-copy": "^2.0.5",
     "josm-interpolate-string": "^1.1.0",
     "shelljs": "^0.8.4",
-    "xrray": "^4.6.5",
+    "xrray": "^4.6.8",
     "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "rollup": "^2.25.0",
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0"
   }
 }
