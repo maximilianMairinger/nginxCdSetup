@@ -1,14 +1,18 @@
-const yargs = require("yargs")
+import yargs from "yargs"
 const args = yargs.argv
-const detectPort = require("detect-port")
-const setup = require("./setup")
-const path = require("path")
-const clone = require("fast-copy")
-const createNginxConf = require("./createNginxConf")
-const createAppConf = require("./createAppConf")
-const xrray = require("xrray")
+import detectPort from "detect-port"
+import setup from "./setup"
+import path from "path"
+import clone from "fast-copy"
+import createNginxConf from "./createNginxConf"
+import createAppConf from "./createAppConf"
+import xrray from "xrray"
 xrray(Array)
+
 const startPort = 5000
+
+export { createNginxConf } from "./createNginxConf"
+export * from "./createNginxConf"
 
 
 

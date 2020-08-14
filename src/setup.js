@@ -1,5 +1,5 @@
-const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./fsUtil")
-const path = require("path") 
+import { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } from "./fsUtil"
+import path from "path"
 
 
 
@@ -13,8 +13,8 @@ const path = require("path")
 //   name: args.name
 // }
 
-
-module.exports = async (config) => {
+export default setup
+export async function setup (config) {
 
   await Promise.all([
     ensureDir(path.join(config.appDest)),

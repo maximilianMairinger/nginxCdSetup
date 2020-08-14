@@ -1,8 +1,8 @@
-const { promises: fs } = require("fs")
-const path = require("path")
+import { promises as fs } from "fs"
+import path from "path"
 
 
-async function doesFileExist(filepath){
+export async function doesFileExist(filepath){
   try {
     await fs.access(filepath, fs.F_OK);
     return true
@@ -12,25 +12,25 @@ async function doesFileExist(filepath){
   }
 }
 
-async function ensureDir(dir) {
+export async function ensureDir(dir) {
   if (!(await doesFileExist(dir))) {
     await fs.mkdir(dir)
   }
 }
 
-async function clearDir(dir) {
+export async function clearDir(dir) {
   if (await doesFileExist(dir)) {
     await fs.rmdir(dir, { recursive: true })
   }
   await fs.mkdir(dir)
 }
 
-async function isDirEmpty(dir) {
+export async function isDirEmpty(dir) {
   const files = await fs.readdir(dir);
   return files.length === 0;
 }
 
-async function ensureDirEmpty(dir) {
+export async function ensureDirEmpty(dir) {
   if (await doesFileExist(dir)) {
     if (!(await isDirEmpty(dir))) throw new Error(dir + " is not an empty directory")
   }
@@ -39,17 +39,9 @@ async function ensureDirEmpty(dir) {
   }
 }
 
-async function ensureFileEmpty(file) {
+export async function ensureFileEmpty(file) {
   if (await doesFileExist(file)) {
     if ((await fs.readFile(file)).length !== 0) throw new Error(file + " already exsists")
   }
 }
 
-module.exports = {
-  doesFileExist,
-  ensureDir,
-  clearDir,
-  isDirEmpty,
-  ensureDirEmpty,
-  ensureFileEmpty
-}

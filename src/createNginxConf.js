@@ -1,11 +1,11 @@
-const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./fsUtil")
-const resolveTemplate = require("josm-interpolate-string")
-const { promises: fs } = require("fs")
-const path = require("path")
-const xrray = require("xrray")
+import { promises as fs } from "fs"
+import path from "path"
+import resolveTemplate from "josm-interpolate-string"
+import $ from "./shell"
+import xrray from "xrray"
 xrray(Array)
 
-const $ = require("./shell")
+
 
 
 // const masterConfig = {
@@ -19,7 +19,7 @@ const $ = require("./shell")
 //   port: 6500
 // }
 
-module.exports = async (configs, progressCb) => {
+export async function createNginxConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
   const log = progressCb ? progressCb : console.log.bind(console);
 
@@ -59,6 +59,8 @@ module.exports = async (configs, progressCb) => {
 
   $(`service nginx reload`, `Reload of nginx failed`)
 }
+
+export default createNginxConf
 
 
 const preConfigFileContent = `

@@ -1,11 +1,11 @@
-const { clearDir, ensureDir, ensureDirEmpty, ensureFileEmpty, isDirEmpty } = require("./fsUtil")
-const { promises: fs } = require("fs")
-const resolveTemplate = require("./resolveTemplate")
-const path = require("path")
-const resolveTemplate = require("josm-interpolate-string")
-const $ = require("./shell")
-const xrray = require("xrray")
+
+import { promises as fs } from "fs"
+import path from "path"
+import resolveTemplate from "josm-interpolate-string"
+import $ from "./shell"
+import xrray from "xrray"
 xrray(Array)
+
 
 // const masterConfig = {
 //   nginxDest: path.resolve(args.nginxConfDestination),
@@ -18,7 +18,7 @@ xrray(Array)
 //   port: 6500
 // }
 
-module.exports = async (configs, progressCb) => {
+export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
   const log = progressCb ? (...a) => {console.log(...a); progressCb(...a)} : console.log.bind(console);
 
@@ -71,6 +71,7 @@ module.exports = async (configs, progressCb) => {
     $(`pm2 start ecosystem.config.js`, `Unable to start pm2 for ${conf.name}@${conf.modifier}`)
   })
 }
+export default createAppConf
 
 const ecosystemConfigJsTemplate = `
 module.exports = {

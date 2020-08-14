@@ -1,6 +1,6 @@
-const shelljs = require("shelljs")
+import shelljs from "shelljs"
 
-class ShellError extends Error {
+export class ShellError extends Error {
   constructor(msg, stderr, cmd) {
     super(msg)
     this.stderr = stderr
@@ -10,10 +10,8 @@ class ShellError extends Error {
 
 
 
-module.exports = (cmd, errorMsg = "An unknown error occurred") => {
+export default function(cmd, errorMsg = "An unknown error occurred") {
   let q = shelljs.exec(cmd)
   if (q.code !== 0) throw new ShellError(errorMsg, q.stderr, cmd)
   return q.stdout
 }
-
-module.exports.ShellError = ShellError
