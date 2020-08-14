@@ -25,20 +25,24 @@ export async function createAppConf(configs, progressCb) {
   log(`Cloning ${conf.name}...`)
 
   configs.ea((conf) => {
-    $(`cd ${path.join(conf.appDest, conf.branch)}`)
-    $(`git clone git@github.com:${conf.githubUsername}/${conf.name}`, `The repository ${conf.name} does not exist on user ${conf.githubUsername}.`)
+    if (conf.branch !== undefined) conf.modifier = conf.branch
+    else conf.modifier = conf.hash
+    conf.dir = path.join(conf.appDest, conf.name, conf.modifier)
+  })
+
+  configs.ea((conf) => {
+    $(`cd ${conf.dir}`)
+    $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository ${conf.name} does not exist on user ${conf.githubUsername}.`)
     $(`cd ${conf.name}`)
     if (conf.branch !== undefined) {
-      conf.modifier = conf.branch
       $(`git checkout ${conf.branch}`, `The branch ${conf.branch} does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
     }
     else if (conf.hash !== undefined) {
-      conf.modifier = conf.hash
       $(`git checkout ${conf.hash}`, `The commit hash ${conf.hash} does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
       $(`git reset --hard`)
     }
 
-    conf.dir = path.join(conf.appDest, conf.name, conf.modifier)
+    
     
   })
 
