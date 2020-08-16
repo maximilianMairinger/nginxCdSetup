@@ -50,6 +50,7 @@ export async function createNginxConf(configs, progressCb) {
 
     let domainCliParam = ""
     configs.ea((conf) => {
+      if (conf.hash !== undefined) domainCliParam += `-d ${conf.hash.substr(0, 7)}.${conf.name}.maximilian.mairinger.com `
       domainCliParam += `-d ${conf.domain} `
     })
   
