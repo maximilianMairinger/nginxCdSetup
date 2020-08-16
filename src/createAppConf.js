@@ -32,20 +32,17 @@ export async function createAppConf(configs, progressCb) {
   let lastName
 
   configs.ea(async (conf) => {
-    if (conf.name !== lastName) log(`Cloning ${conf.name}...`)
+    if (conf.name !== lastName) log(`Cloning <i title="${conf.modifier}">${conf.name}</i>...`)
     lastName = conf.name
 
-    console.log("Cloning into " + conf.dir)
-    console.log(await fs.readdir(conf.dir))
-
     $(`cd ${conf.dir}`)
-    $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository ${conf.name} does not exist on user ${conf.githubUsername}.`)
+    $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
     $(`cd ${conf.name}`)
     if (conf.branch !== undefined) {
-      $(`git checkout ${conf.branch}`, `The branch ${conf.branch} does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
+      $(`git checkout ${conf.branch}`, `The branch ${conf.branch} does not exist on repository <i title="${conf.modifier}">${conf.name}</i> of user ${conf.githubUsername}.`)
     }
     else if (conf.hash !== undefined) {
-      $(`git checkout ${conf.hash}`, `The commit hash ${conf.hash} does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
+      $(`git checkout ${conf.hash}`, `The commit hash ${conf.hash} does not exist on repository <i title="${conf.modifier}">${conf.name}</i> of user ${conf.githubUsername}.`)
       $(`git reset --hard`)
     }
 
@@ -58,9 +55,9 @@ export async function createAppConf(configs, progressCb) {
 
   configs.ea((conf) => {
     $(`cd ${conf.dir}`)
-    log(`Installing dependencies for ${conf.name}@${conf.modifier}...`)
+    log(`Installing dependencies for <i title="${conf.modifier}">${conf.name}</i>...`)
     $(`npm i`, `While installing dependencies`)
-    log(`Building ${conf.name}@${conf.modifier}...`)
+    log(`Building <i title="${conf.modifier}">${conf.name}</i>...`)
     $(`npm run build --if-present`)
   })
 
@@ -79,7 +76,7 @@ export async function createAppConf(configs, progressCb) {
 
   configs.ea((conf) => {
     $(`cd ${conf.dir}`)
-    $(`pm2 start ecosystem.config.js`, `Unable to start pm2 for ${conf.name}@${conf.modifier}`)
+    $(`pm2 start ecosystem.config.js`, `Unable to start pm2 for <i title="${conf.modifier}">${conf.name}</i>`)
   })
 }
 export default createAppConf
