@@ -44,6 +44,8 @@ export async function createNginxConf(configs, progressCb) {
   })
 
   try {
+    log("skipping rest")
+    return
     log(`Obtaining ssl certificate...`)
 
     let domainCliParam = ""
