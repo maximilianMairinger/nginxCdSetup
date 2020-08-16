@@ -34,6 +34,16 @@ export async function createNginxConf(configs, progressCb) {
   let proms = []
 
   configs.ea((conf) => {
+    if (conf.hash !== undefined) {
+      conf.shortDomain = `${conf.hash.substr(0, 7)}.${conf.name}.maximilian.mairinger.com`
+      conf.shortDomainWithSpace = " " + conf.shortDomain
+    }
+    else {
+      conf.shortDomainWithSpace = ""
+    }
+  })
+
+  configs.ea((conf) => {
     proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContent, conf).get()))
   })
 
@@ -50,7 +60,7 @@ export async function createNginxConf(configs, progressCb) {
 
     let domainCliParam = ""
     configs.ea((conf) => {
-      if (conf.hash !== undefined) domainCliParam += `-d ${conf.hash.substr(0, 7)}.${conf.name}.maximilian.mairinger.com `
+      if (conf.shortDomain !== undefined) domainCliParam += `-d ${conf.shortDomain} `
       domainCliParam += `-d ${conf.domain} `
     })
   
@@ -88,7 +98,7 @@ server {
 
   listen 80;
                  
-  server_name $[ domain ];
+  server_name $[ domain ]$[ shortDomainWithSpace ];
 
   location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
