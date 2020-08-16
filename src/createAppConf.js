@@ -31,7 +31,7 @@ export async function createAppConf(configs, progressCb) {
 
   let lastName
 
-  configs.ea(async (conf) => {
+  configs.ea((conf) => {
     if (conf.name !== lastName) log(`Cloning <i title="${conf.modifier}">${conf.name}</i>...`)
     lastName = conf.name
 
@@ -66,7 +66,6 @@ export async function createAppConf(configs, progressCb) {
 
   let proms = []
   configs.ea((conf) => {
-    if (configs)
     proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf).get()))
   })
 
