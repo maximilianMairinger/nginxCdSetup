@@ -44,9 +44,11 @@ export async function createNginxConf(configs, progressCb) {
     $(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`, `Unable to link ${conf.domain}.`)
   })
 
+  log("skipping rest")
+  throw new Error("Skip")
+  
+
   try {
-    log("skipping rest")
-    return
     log(`Obtaining ssl certificate...`)
 
     let domainCliParam = ""
