@@ -42,10 +42,10 @@ export async function createAppConf(configs, progressCb) {
     $(`git clone git@github.com:${conf.githubUsername}/${conf.name} ${conf.dir}`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
     $(`cd ${conf.dir}`)
     if (conf.branch !== undefined) {
-      $(`git checkout ${conf.branch}`, `The branch ${conf.branch} does not exist on repository <i title="${conf.modifier}">${conf.name}</i> of user ${conf.githubUsername}.`)
+      $(`git checkout ${conf.branch}`, `The branch <i>${conf.branch}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
     }
     else if (conf.hash !== undefined) {
-      $(`git checkout ${conf.hash}`, `The commit hash ${conf.hash} does not exist on repository <i title="${conf.modifier}">${conf.name}</i> of user ${conf.githubUsername}.`)
+      $(`git checkout ${conf.hash}`, `The commit hash <i>${conf.hash}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
       $(`git reset --hard`)
     }
 
