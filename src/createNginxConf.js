@@ -54,6 +54,9 @@ export async function createNginxConf(configs, progressCb) {
   })
 
   log("skipping rest")
+  // TODO: 
+  // make sure certbot is installed
+  // try to manually activate a certbot certificate for server 4 and 5
   return
 
   try {
