@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app/index",
+    "start": "node start",
     "build": "rollup --config rollup.node.prod.config.js",
     "test": "npm run build && node createTestEnv.js && npm start -- --nginxConfDestination ./test_out/nginx --appDestination ./test_out/app --name testOut --domain testout.maximilian.mairinger.com --githubUsername maximilianMairinger"
   },

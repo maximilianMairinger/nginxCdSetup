@@ -14,27 +14,25 @@ const startPort = 5000
 export { createNginxConf } from "./createNginxConf"
 export { createAppConf } from "./createAppConf"
 
-
-
-const masterConfig = {
-  nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
-  appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
-  domain: args.domain,
-  name: args.name,
-  branch: "master",
-  githubUsername: args.githubUsername
-}
-
-
-const devConfig = clone(masterConfig);
-devConfig.domain = `dev.${devConfig.domain}`
-devConfig.branch = "dev";
-
-
-
-
-(async () => {
-
+export async function go() {
+  const masterConfig = {
+    nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
+    appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
+    domain: args.domain,
+    name: args.name,
+    branch: "master",
+    githubUsername: args.githubUsername
+  }
+  
+  
+  const devConfig = clone(masterConfig);
+  devConfig.domain = `dev.${devConfig.domain}`
+  devConfig.branch = "dev";
+  
+  
+  
+  
+  
   let setupProm = setup(masterConfig).then(() => {
     console.log("Setup done")
   })
@@ -45,8 +43,8 @@ devConfig.branch = "dev";
       console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
     })
   })
-  
-  
+
+
 
   await Promise.all([setupProm, portProm])
 
@@ -61,13 +59,15 @@ devConfig.branch = "dev";
     console.log("Cmd: " + e.cmd)
     console.log("Stderr: " + e.stderr)
   }
-
-
-
-})()
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
 
