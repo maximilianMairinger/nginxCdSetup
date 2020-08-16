@@ -35,6 +35,7 @@ export async function createAppConf(configs, progressCb) {
     if (conf.name !== lastName) log(`Cloning ${conf.name}...`)
     lastName = conf.name
 
+    console.log("Cloning into " + conf.dir)
 
     $(`cd ${conf.dir}`)
     $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository ${conf.name} does not exist on user ${conf.githubUsername}.`)
