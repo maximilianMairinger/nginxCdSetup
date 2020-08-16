@@ -70,7 +70,7 @@ export async function createAppConf(configs, progressCb) {
   let proms = []
   configs.ea((conf) => {
     if (configs)
-    proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf)))
+    proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf).get()))
   })
 
   await Promise.all(proms)
