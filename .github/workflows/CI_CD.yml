@@ -39,3 +39,4 @@ jobs:
           nvm use 14.0.0
           npm i
           npm run build --if-present
+          pm2 reload nginxOnTheFlySetup
