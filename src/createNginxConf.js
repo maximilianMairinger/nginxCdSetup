@@ -21,7 +21,7 @@ xrray(Array)
 
 export async function createNginxConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
-  const log = progressCb ? progressCb : console.log.bind(console);
+  const log = progressCb ? (...a) => {console.log(...a); progressCb(...a)} : console.log.bind(console);
 
   
   
