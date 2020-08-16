@@ -22,7 +22,6 @@ export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
   const log = progressCb ? (...a) => {console.log(...a); progressCb(...a)} : console.log.bind(console);
 
-  log(`Cloning ${conf.name}...`)
 
   configs.ea((conf) => {
     if (conf.branch !== undefined) conf.modifier = conf.branch
@@ -30,7 +29,13 @@ export async function createAppConf(configs, progressCb) {
     conf.dir = path.join(conf.appDest, conf.name, conf.modifier)
   })
 
+  let lastName
+
   configs.ea((conf) => {
+    if (conf.name !== lastName) log(`Cloning ${conf.name}...`)
+    lastName = conf.name
+
+
     $(`cd ${conf.dir}`)
     $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository ${conf.name} does not exist on user ${conf.githubUsername}.`)
     $(`cd ${conf.name}`)
