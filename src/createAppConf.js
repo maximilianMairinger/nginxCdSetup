@@ -39,9 +39,8 @@ export async function createAppConf(configs, progressCb) {
 
     
 
+    $(`git clone git@github.com:${conf.githubUsername}/${conf.name} ${conf.dir}`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
     $(`cd ${conf.dir}`)
-    $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
-    $(`cd ${conf.name}`)
     if (conf.branch !== undefined) {
       $(`git checkout ${conf.branch}`, `The branch ${conf.branch} does not exist on repository <i title="${conf.modifier}">${conf.name}</i> of user ${conf.githubUsername}.`)
     }
