@@ -53,11 +53,9 @@ export async function createNginxConf(configs, progressCb) {
     $(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`, `Unable to link ${conf.domain}.`)
   })
 
-  log("skipping rest")
   // TODO: 
   // make sure certbot is installed
   // try to manually activate a certbot certificate for server 4 and 5
-  return
 
   try {
     log(`Obtaining ssl certificate...`)
@@ -71,25 +69,15 @@ export async function createNginxConf(configs, progressCb) {
   
    
     $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
-    
-  
-    log(`Reloading nginx...`)
-  
-    $(`service nginx reload`, `Reload of nginx failed`)
   }
   catch(e) {
-    console.log("Failure after linking. Cleanup: Removing links")
-    configs.ea((conf) => {
-      $(`rm ${path.join(sitesEnabled, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
-      $(`rm ${path.join(sitesAvailable, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
-    })
-
-    $(`service nginx reload`, `Reload of nginx failed`)
-    
-    throw e
+    err("Unable to obtain certificat")
+    log("Continuing as http client")
   }
-
   
+  log(`Reloading nginx...`)
+
+  $(`service nginx reload`, `Reload of nginx failed`)
 }
 
 export default createNginxConf
