@@ -31,9 +31,13 @@ export async function createAppConf(configs, progressCb) {
 
   let lastName
 
+  console.log("files", await fs.readDir(configs[0]))
+
   configs.ea((conf) => {
     if (conf.name !== lastName) log(`Cloning <i title="${conf.modifier}">${conf.name}</i>...`)
     lastName = conf.name
+
+    
 
     $(`cd ${conf.dir}`)
     $(`git clone git@github.com:${conf.githubUsername}/${conf.name} .`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
