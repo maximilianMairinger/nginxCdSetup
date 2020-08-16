@@ -40,13 +40,12 @@ export async function createAppConf(configs, progressCb) {
     
 
     $(`git clone git@github.com:${conf.githubUsername}/${conf.name} ${conf.dir}`, `The repository <i title="${conf.modifier}">${conf.name}</i> does not exist on user ${conf.githubUsername}.`)
-    $(`cd ${conf.dir}`)
     if (conf.branch !== undefined) {
-      $(`git checkout ${conf.branch}`, `The branch <i>${conf.branch}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
+      $(`cd ${conf.dir} && git checkout ${conf.branch}`, `The branch <i>${conf.branch}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
     }
     else if (conf.hash !== undefined) {
-      $(`git checkout ${conf.hash}`, `The commit hash <i>${conf.hash}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
-      $(`git reset --hard`)
+      $(`cd ${conf.dir} && git checkout ${conf.hash}`, `The commit hash <i>${conf.hash}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
+      $(`cd ${conf.dir} && git reset --hard`)
     }
 
     
@@ -59,9 +58,9 @@ export async function createAppConf(configs, progressCb) {
   configs.ea((conf) => {
     $(`cd ${conf.dir}`)
     log(`Installing dependencies for <i title="${conf.modifier}">${conf.name}</i>...`)
-    $(`npm i`, `While installing dependencies`)
+    $(`cd ${conf.dir} && npm i`, `While installing dependencies`)
     log(`Building <i title="${conf.modifier}">${conf.name}</i>...`)
-    $(`npm run build --if-present`)
+    $(`cd ${conf.dir} && npm run build --if-present`)
   })
 
 
