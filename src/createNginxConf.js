@@ -78,6 +78,8 @@ export async function createNginxConf(configs, progressCb) {
       $(`rm ${path.join(sitesEnabled, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
       $(`rm ${path.join(sitesAvailable, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
     })
+
+    $(`service nginx reload`, `Reload of nginx failed`)
     
     throw e
   }
