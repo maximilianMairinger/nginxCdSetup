@@ -26,9 +26,10 @@ export async function createNginxConf(configs, progressCb) {
   
   
   log(`Adding and linking entry to nginx routing registry...`)
+  let aConfig = configs[0]
 
-  let sitesAvailable = path.join(masterConfig.nginxDest, "sites-available")
-  let sitesEnabled = path.join(masterConfig.nginxDest, "sites-enabled")
+  let sitesAvailable = path.join(aConfig.nginxDest, "sites-available")
+  let sitesEnabled = path.join(aConfig.nginxDest, "sites-enabled")
 
   let proms = []
 
