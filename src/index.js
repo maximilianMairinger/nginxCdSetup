@@ -12,7 +12,7 @@ xrray(Array)
 const startPort = 5000
 
 export { createNginxConf } from "./createNginxConf"
-export * from "./createNginxConf"
+export { createAppConf } from "./createAppConf"
 
 
 
