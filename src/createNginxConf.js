@@ -43,20 +43,30 @@ export async function createNginxConf(configs, progressCb) {
     $(`ln -s ${path.join(sitesAvailable, conf.domain)} ${sitesEnabled}`, `Unable to link ${conf.domain}.`)
   })
 
-  log(`Obtaining ssl certificate...`)
+  try {
+    log(`Obtaining ssl certificate...`)
 
-  let domainCliParam = ""
-  configs.ea((conf) => {
-    domainCliParam += `-d ${conf.domain} `
-  })
-
-
-  $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall --dry-run`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
+    let domainCliParam = ""
+    configs.ea((conf) => {
+      domainCliParam += `-d ${conf.domain} `
+    })
   
+   
+    $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall --dry-run`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
+    
+  
+    log(`Reloading nginx...`)
+  
+    $(`service nginx reload`, `Reload of nginx failed`)
+  }
+  catch(e) {
+    console.log("Failure after linking. Cleanup: Removing links")
+    $(`rm ${path.join(sitesEnabled, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
+    $(`rm ${path.join(sitesAvailable, conf.domain)}`, `Unable to unlink ${conf.domain}.`)
+    throw e
+  }
 
-  log(`Reloading nginx...`)
-
-  $(`service nginx reload`, `Reload of nginx failed`)
+  
 }
 
 export default createNginxConf
