@@ -34,6 +34,7 @@ export async function createNginxConf(configs, progressCb) {
   let proms = []
 
   configs.ea((conf) => {
+    console.log("resolveTemplate", conf)
     proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContent, conf).get()))
   })
 
