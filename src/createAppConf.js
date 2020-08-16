@@ -56,7 +56,6 @@ export async function createAppConf(configs, progressCb) {
   
 
   configs.ea((conf) => {
-    $(`cd ${conf.dir}`)
     log(`Installing dependencies for <i title="${conf.modifier}">${conf.name}</i>...`)
     $(`cd ${conf.dir} && npm i`, `While installing dependencies`)
     log(`Building <i title="${conf.modifier}">${conf.name}</i>...`)
@@ -76,9 +75,10 @@ export async function createAppConf(configs, progressCb) {
   log(`Starting pm2 threads...`)
 
   configs.ea((conf) => {
-    $(`cd ${conf.dir}`)
-    $(`pm2 start ecosystem.config.js`, `Unable to start pm2 for <i title="${conf.modifier}">${conf.name}</i>`)
+    $(`cd ${conf.dir} && pm2 start ecosystem.config.js`, `Unable to start pm2 for <i title="${conf.modifier}">${conf.name}</i>`)
   })
+
+  log(`Done with app installation`)
 }
 export default createAppConf
 
