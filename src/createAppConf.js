@@ -31,7 +31,7 @@ export async function createAppConf(configs, progressCb) {
 
   let lastName
 
-  console.log("files", await fs.readDir(configs[0]))
+  console.log("files", await fs.readdir(configs[0]))
 
   configs.ea((conf) => {
     if (conf.name !== lastName) log(`Cloning <i title="${conf.modifier}">${conf.name}</i>...`)
