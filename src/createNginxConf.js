@@ -45,15 +45,13 @@ export async function createNginxConf(configs, progressCb) {
 
   log(`Obtaining ssl certificate...`)
 
-  $(`cd ${path.join(sitesAvailable)}`)
-
   let domainCliParam = ""
   configs.ea((conf) => {
     domainCliParam += `-d ${conf.domain} `
   })
 
 
-  $(`certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
+  $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check https://crt.sh/.`)
   
 
   log(`Reloading nginx...`)
