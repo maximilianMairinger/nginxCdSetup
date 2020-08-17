@@ -44,7 +44,8 @@ export async function createNginxConf(configs, progressCb) {
   })
 
   configs.ea((conf) => {
-    proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContent, conf).get()))
+    if (conf.justAlias) proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContentWithoutUpstream, conf).get()))
+    else proms.add(fs.writeFile(path.join(sitesAvailable, conf.domain), resolveTemplate(preConfigFileContent, conf).get()))
   })
 
   await Promise.all(proms)
@@ -81,6 +82,29 @@ export async function createNginxConf(configs, progressCb) {
 
 export default createNginxConf
 
+
+const preConfigFileContentWithoutUpstream = `
+server {
+
+  listen 80;
+                 
+  server_name $[ domain ];
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $http_host;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://nodejs_upstream_$[ port ]/;
+    proxy_redirect off;
+    proxy_read_timeout 240s;
+  }
+
+}`
 
 const preConfigFileContent = `
 upstream nodejs_upstream_$[ port ] {
