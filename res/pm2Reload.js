@@ -11,9 +11,9 @@ function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
     forceCall_cb = false
   }
   if (typeof cb_keyword === "string") return function(err, ...a) {
-    if (cb_keyword === "disconnect") forceCall = true
+    if (cb_keyword === "disconnect") forceCall_cb = true
 
-    if (forceCall) return function(err, ...a) {
+    if (forceCall_cb) return function(err, ...a) {
       if (err) console.error(err)
       pm2[cb_keyword](err(() => {
         if (err) process.exit(2)
@@ -28,7 +28,7 @@ function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
 
   }
   else {
-    if (forceCall) return function(err, ...a) {
+    if (forceCall_cb) return function(err, ...a) {
       if (err) console.error(err)
       cb_keyword(...a)
       if (err) process.exit(2)
