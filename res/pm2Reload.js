@@ -58,17 +58,17 @@ let ecosystemConfigString = JSON.stringify(ecosystemConfig)
 }*/
 
 pm2.connect(err(() => {
-  if (equals(ecosystemConfig, lastEcosystemConfig)) {
-    pm2.reload(ecosystemConfig.name, err("disconnect"))
-  }
-  else {
-    pm2.list(err((list) => {
-      let nameList = []
-      
-      list.forEach((e) => {
-        nameList.push(e.name)
-      })
+  pm2.list(err((list) => {
+    let nameList = []
+    list.forEach((e) => {
+      nameList.push(e.name)
+    })
 
+    if (equals(ecosystemConfig, lastEcosystemConfig)) {
+      if (nameList.includes(ecosystemConfig.name)) pm2.reload(ecosystemConfig.name, err("disconnect"))
+      else pm2.start(ecosystemConfig, err("disconnect"))
+    }
+    else {
       if (nameList.includes(lastEcosystemConfig.name)) {
         pm2.delete(lastEcosystemConfig.name, err(() => {
           pm2.start(ecosystemConfig, err("disconnect"))
@@ -77,7 +77,8 @@ pm2.connect(err(() => {
       else {
         pm2.start(ecosystemConfig, err("disconnect"))
       }
-    }))
-  }
-  fs.writeFileSync(ecosystemCacheFileName, JSON.stringify(ecosystemConfig))
+    }
+
+    fs.writeFileSync(ecosystemCacheFileName, JSON.stringify(ecosystemConfig))
+  }))
 }))
