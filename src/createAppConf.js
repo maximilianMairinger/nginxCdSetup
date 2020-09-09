@@ -21,6 +21,7 @@ xrray(Array)
 
 
 const ecosystemConfigJsTemplate = fss.readFileSync("../res/ecosystem.config.js")
+const pm2ReloadJsTemplate = fss.readFileSync("../res/pm2Reload.js")
 
 export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
@@ -72,6 +73,7 @@ export async function createAppConf(configs, progressCb) {
   let proms = []
   configs.ea((conf) => {
     proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf).get()))
+    proms.add(fs.writeFile(path.join(conf.dir, "pm2Reload.js"), resolveTemplate(pm2ReloadJsTemplate, conf).get()))
   })
 
   await Promise.all(proms)
