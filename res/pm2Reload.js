@@ -13,7 +13,7 @@ function err(cb_keyword = () => {}) {
       if (error) {console.log("err", error); process.exit(2)}
       if (cb_keyword instanceof Array) {
         function rec() {
-          if (cb_keyword[0]) cb_keyword[0](err(() => {
+          if (cb_keyword[0]) pm2[cb_keyword[0]](err(() => {
             cb_keyword.splice(0, 1);
             rec()
           }))
