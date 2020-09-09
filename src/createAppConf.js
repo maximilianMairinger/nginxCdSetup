@@ -1,5 +1,6 @@
 
 import { promises as fs } from "fs"
+import fss from "fs"
 import path from "path"
 import resolveTemplate from "josm-interpolate-string"
 import $ from "./shell"
@@ -17,6 +18,9 @@ xrray(Array)
 //   githubUsername: "",
 //   port: 6500
 // }
+
+
+const ecosystemConfigJsTemplate = fss.readFileSync("../res/ecosystem.config.js")
 
 export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
@@ -81,18 +85,4 @@ export async function createAppConf(configs, progressCb) {
   log(`Done with app installation`)
 }
 export default createAppConf
-
-const ecosystemConfigJsTemplate = `
-module.exports = {
-  apps : [{
-    script: "replServer/dist/server.js",
-    name: "$[ branch / hash ].$[ name ]",
-    exec_mode : "cluster",
-    instances: 2,
-    wait_ready: true,
-    args: "--port $[ port ]"
-  }]
-}
-`
-
 
