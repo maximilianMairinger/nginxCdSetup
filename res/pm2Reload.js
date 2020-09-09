@@ -5,16 +5,16 @@ const ecosystemConfig = require("./ecosystem.config.js")
 const ecosystemCacheFileName = "./.ecosystemCache"
 
 
-function err(cb_keyword) {
+function err(cb_keyword = () => {}) {
   if (typeof cb_keyword === "string" | cb_keyword instanceof Array) {
     if (cb_keyword === "end") cb_keyword = ["dump", "disconnect"]
 
     return function(err, ...a) {
       if (err) {console.log("err", err); process.exit(2)}
       if (cb_keyword instanceof Array) cb_keyword.forEach((cb_keyword) => {
-        pm2[cb_keyword](cb)
+        pm2[cb_keyword](err())
       })
-      else pm2[cb_keyword](cb)
+      else pm2[cb_keyword](err())
       
     }
   }
@@ -22,7 +22,6 @@ function err(cb_keyword) {
   else return function(err, ...a) {
     if (err) {console.log("err", err); process.exit(2)}
     cb_keyword(...a)
-    cb()
   }
 }
 
