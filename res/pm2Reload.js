@@ -5,40 +5,24 @@ const ecosystemConfig = require("./ecosystem.config.js")
 const ecosystemCacheFileName = "./.ecosystemCache"
 
 
-function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
-  if (forceCall_cb instanceof Function) {
-    cb = forceCall_cb
-    forceCall_cb = false
-  }
-  if (typeof cb_keyword === "string") {
-    if (cb_keyword === "disconnect") forceCall_cb = true
+function err(cb_keyword) {
+  if (typeof cb_keyword === "string" | cb_keyword instanceof Array) {
+    if (cb_keyword === "end") cb_keyword = ["dump", "disconnect"]
 
-    if (forceCall_cb) return function(error, ...a) {
-      if (error) console.log("err", error)
-      pm2[cb_keyword](err(() => {
-        if (error) process.exit(2)
-        cb()
-      }))
+    return function(err, ...a) {
+      if (err) {console.log("err", err); process.exit(2)}
+      if (cb_keyword instanceof Array) cb_keyword.forEach((cb_keyword) => {
+        pm2[cb_keyword](cb)
+      })
+      else pm2[cb_keyword](cb)
       
     }
-    else return function(err, ...a) {
-      if (err) {console.log("err", err); process.exit(2)}
-      pm2[cb_keyword](cb)
-    }
-
   }
-  else {
-    if (forceCall_cb) return function(err, ...a) {
-      if (err) console.log("err", err)
-      cb_keyword(...a)
-      if (err) process.exit(2)
-      cb()
-    }
-    else return function(err, ...a) {
-      if (err) {console.log("err", err); process.exit(2)}
-      cb_keyword(...a)
-      cb()
-    }
+
+  else return function(err, ...a) {
+    if (err) {console.log("err", err); process.exit(2)}
+    cb_keyword(...a)
+    cb()
   }
 }
 
@@ -65,17 +49,17 @@ pm2.connect(err(() => {
     })
 
     if (equals(ecosystemConfig, lastEcosystemConfig)) {
-      if (nameList.includes(ecosystemConfig.name)) pm2.reload(ecosystemConfig.name, err("disconnect"))
-      else pm2.start(ecosystemConfig, err("disconnect"))
+      if (nameList.includes(ecosystemConfig.name)) pm2.reload(ecosystemConfig.name, err("end"))
+      else pm2.start(ecosystemConfig, err("end"))
     }
     else {
       if (nameList.includes(lastEcosystemConfig.name)) {
         pm2.delete(lastEcosystemConfig.name, err(() => {
-          pm2.start(ecosystemConfig, err("disconnect"))
+          pm2.start(ecosystemConfig, err("end"))
         }))
       }
       else {
-        pm2.start(ecosystemConfig, err("disconnect"))
+        pm2.start(ecosystemConfig, err("end"))
       }
     }
 
