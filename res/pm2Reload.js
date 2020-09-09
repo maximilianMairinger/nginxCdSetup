@@ -1,8 +1,8 @@
 const pm2 = require("pm2")
 const fs = require("fs")
+const { deepEqual: equals } = require("fast-equals")
 const ecosystemConfig = require("./ecosystem.config.js")
-
-const ecosystemCacheFileName = ".ecosystemCache"
+const ecosystemCacheFileName = "./.ecosystemCache"
 
 
 function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
@@ -10,32 +10,32 @@ function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
     cb = forceCall_cb
     forceCall_cb = false
   }
-  if (typeof cb_keyword === "string") return function(err, ...a) {
+  if (typeof cb_keyword === "string") {
     if (cb_keyword === "disconnect") forceCall_cb = true
 
-    if (forceCall_cb) return function(err, ...a) {
-      if (err) console.error(err)
+    if (forceCall_cb) return function(error, ...a) {
+      if (error) console.log("err", error)
       pm2[cb_keyword](err(() => {
-        if (err) process.exit(2)
+        if (error) process.exit(2)
         cb()
       }))
       
     }
     else return function(err, ...a) {
-      if (err) {console.error(err); process.exit(2)}
+      if (err) {console.log("err", err); process.exit(2)}
       pm2[cb_keyword](cb)
     }
 
   }
   else {
     if (forceCall_cb) return function(err, ...a) {
-      if (err) console.error(err)
+      if (err) console.log("err", err)
       cb_keyword(...a)
       if (err) process.exit(2)
       cb()
     }
     else return function(err, ...a) {
-      if (err) {console.error(err); process.exit(2)}
+      if (err) {console.log("err", err); process.exit(2)}
       cb_keyword(...a)
       cb()
     }
@@ -44,16 +44,39 @@ function err(cb_keyword, forceCall_cb = false, cb = () => {}) {
 
 
 
+let lastEcosystemConfigString = fs.existsSync(ecosystemCacheFileName) ? fs.readFileSync(ecosystemCacheFileName).toString() : "{}"
+let lastEcosystemConfig = JSON.parse(lastEcosystemConfigString)
+let ecosystemConfigString = JSON.stringify(ecosystemConfig)
 
-let lastEcosystemConfig = fs.existsSync(ecosystemCacheFileName) ? fs.readFileSync(ecosystemCacheFileName).toString() : ""
+/*{
+  script: "replServer/dist/server.js",
+  name: "$[ branch / hash ].$[ name ]",
+  exec_mode : "cluster",
+  instances: 2,
+  wait_ready: true,
+  args: "--port $[ port ]"
+}*/
 
 pm2.connect(err(() => {
-  if (JSON.stringify(ecosystemConfig) === lastEcosystemConfig) {
-    pm2.reload(ecosystemConfig, err("disconnect"))
+  if (equals(ecosystemConfig, lastEcosystemConfig)) {
+    pm2.reload(ecosystemConfig.name, err("disconnect"))
   }
   else {
-    pm2.delete(JSON.parse(lastEcosystemConfig), err("disconnect", () => {
-      pm2.start(ecosystemConfig, err("disconnect"))
+    pm2.list(err((list) => {
+      let nameList = []
+      
+      list.forEach((e) => {
+        nameList.push(e.name)
+      })
+
+      if (nameList.includes(lastEcosystemConfig.name)) {
+        pm2.delete(lastEcosystemConfig.name, err(() => {
+          pm2.start(ecosystemConfig, err("disconnect"))
+        }))
+      }
+      else {
+        pm2.start(ecosystemConfig, err("disconnect"))
+      }
     }))
   }
   fs.writeFileSync(ecosystemCacheFileName, JSON.stringify(ecosystemConfig))
