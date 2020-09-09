@@ -59,6 +59,4 @@ else config = configPresets.repl
 
 
 
-module.exports = {
-  apps: [config]
-}
+module.exports = config
