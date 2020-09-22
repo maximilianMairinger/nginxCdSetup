@@ -20,8 +20,8 @@ xrray(Array)
 // }
 
 
-const ecosystemConfigJsTemplate = fss.readFileSync("./res/ecosystem.config.js")
-const pm2ReloadJsTemplate = fss.readFileSync("./res/pm2Reload.js")
+const ecosystemConfigJsTemplate = fss.readFileSync("./res/ecosystem.config.js").toString()
+const pm2ReloadJsTemplate = fss.readFileSync("./res/pm2Reload.js").toString()
 
 export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
