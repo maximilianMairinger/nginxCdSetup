@@ -10,6 +10,9 @@ const configPresets = {
     exec_mode : "cluster",
     instances: 2,
     wait_ready: true,
+    env: {
+      port: "$[ port ]",
+    },
     args: "--port $[ port ]"
   },
   prod: {
@@ -18,6 +21,9 @@ const configPresets = {
     exec_mode : "cluster",
     instances: 2,
     wait_ready: true,
+    env: {
+      port: "$[ port ]",
+    },
     args: "--port $[ port ]"
   }
 }
@@ -52,8 +58,14 @@ if (fs.existsSync(configFilePath)) {
 
 
   if (isValidJSON) config = mergeConfig(jsonConfig)
-  else if (configPresets[rawConfig] !== undefined) config = configPresets[rawConfig]
-  else config = configPresets.repl
+  else {
+    let presetConfSplit = rawConfig.split(", ").join(" ").split(" ")
+
+
+    if (configPresets[presetConfSplit[0]] !== undefined) config = configPresets[presetConfSplit[0]]
+    else config = configPresets.repl
+  }
+  
 }
 else config = configPresets.repl
 
