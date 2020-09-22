@@ -6,6 +6,8 @@ const configFilePath = ".deploy"
 const configPresets = {
   repl: {
     script: "replServer/dist/server.js",
+    merge_logs: true,
+    max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
     exec_mode : "cluster",
     instances: 2,
@@ -17,6 +19,8 @@ const configPresets = {
   },
   prod: {
     script: "server/dist/server.js",
+    merge_logs: true,
+    max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
     exec_mode : "cluster",
     instances: 2,
