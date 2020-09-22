@@ -14,6 +14,7 @@ const configPresets = {
     wait_ready: true,
     env: {
       port: "$[ port ]",
+      inProd: false
     },
     args: "--port $[ port ]"
   },
@@ -27,6 +28,7 @@ const configPresets = {
     wait_ready: true,
     env: {
       port: "$[ port ]",
+      inProd: true
     },
     args: "--port $[ port ]"
   }
