@@ -9,7 +9,7 @@ const configPresets = {
     merge_logs: true,
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
-    exec_mode : "cluster",
+    exec_mode : "fork",
     instances: 2,
     wait_ready: true,
     env: {
@@ -23,7 +23,7 @@ const configPresets = {
     merge_logs: true,
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
-    exec_mode : "cluster",
+    exec_mode : "fork",
     instances: 2,
     wait_ready: true,
     env: {
