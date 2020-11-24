@@ -6,7 +6,6 @@ import resolveTemplate from "josm-interpolate-string"
 import $ from "./shell"
 import xrray from "xrray"
 xrray(Array)
-import path from "path"
 
 
 // const masterConfig = {
