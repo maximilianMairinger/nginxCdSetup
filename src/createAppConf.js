@@ -6,6 +6,7 @@ import resolveTemplate from "josm-interpolate-string"
 import $ from "./shell"
 import xrray from "xrray"
 xrray(Array)
+import path from "path"
 
 
 // const masterConfig = {
@@ -20,8 +21,8 @@ xrray(Array)
 // }
 
 
-const ecosystemConfigJsTemplate = fss.readFileSync("../res/ecosystem.config.js").toString()
-const pm2ReloadJsTemplate = fss.readFileSync("../res/pm2Reload.js").toString()
+const ecosystemConfigJsTemplate = fss.readFileSync(path.join(__dirname, "../res/ecosystem.config.js")).toString()
+const pm2ReloadJsTemplate = fss.readFileSync(path.join(__dirname, "../res/pm2Reload.js")).toString()
 
 export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
