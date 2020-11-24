@@ -10,7 +10,7 @@ const configPresets = {
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
     exec_mode : "fork",
-    instances: 2,
+    instances: 1,
     wait_ready: true,
     env: {
       port: "$[ port ]",
@@ -24,7 +24,7 @@ const configPresets = {
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
     exec_mode : "fork",
-    instances: 2,
+    instances: 1,
     wait_ready: true,
     env: {
       port: "$[ port ]",
