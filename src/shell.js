@@ -15,3 +15,4 @@ export default function(cmd, errorMsg = "An unknown error occurred") {
   if (q.code !== 0) throw new ShellError(errorMsg, q.stderr, cmd)
   return q.stdout
 }
+
