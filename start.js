@@ -13,7 +13,7 @@ function injectFsToLogLevel(level) {
   const logLocal = console.log.bind(console)
   console[level] = (...logs) => {
     let formattedLog = formatLog(level, logs)
-    logLocal(formattedLog)
+    logLocal(...logs)
     writeToLogFile(formattedLog)
   }
 }
