@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config rollup.node.prod.config.js",
-    "test": "npm run build && node createTestEnv.js && npm start -- --nginxConfDestination ./test_out/nginx --appDestination ./test_out/app --name testOut --domain testout.maximilian.mairinger.com --githubUsername maximilianMairinger"
+    "test": "rollup --config rollup.node.prod.config.js"
   },
   "keywords": [],
   "author": "",
