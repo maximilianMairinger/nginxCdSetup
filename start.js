@@ -2,8 +2,11 @@ const fs = require("fs")
 
 
 
+function formatLogTime(kind, logs) {
+  return "[" + kind + "]: " + logs.join(", ").split("\n").join("\n" + " ".repeat(kind.length)) + "\t\t\t\t\t\t\t[" + new Date().toLocaleString("de-AT", { timeZone: "Europe/Vienna" }) + "]"
+}
 function formatLog(kind, logs) {
-  return "[" + kind + "]: " + logs.join(", ").split("\n").join("\n\t\t\t") + "\t\t\t\t\t\t\t[" + new Date().toLocaleString("de-AT", { timeZone: "Europe/Vienna" }) + "]"
+  return "[" + kind + "]: " + logs.join(", ").split("\n").join("\n" + " ".repeat(kind.length))
 }
 function writeToLogFile(log) {
   fs.appendFileSync("log", log + "\n")
@@ -12,9 +15,10 @@ function writeToLogFile(log) {
 function injectFsToLogLevel(level) {
   const logLocal = console.log.bind(console)
   console[level] = (...logs) => {
+    let formattedLogTime = formatLogTime(level, logs)
     let formattedLog = formatLog(level, logs)
-    logLocal(...logs)
-    writeToLogFile(formattedLog)
+    logLocal(formattedLog)
+    writeToLogFile(formattedLogTime)
   }
 }
 
