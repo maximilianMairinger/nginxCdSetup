@@ -32,11 +32,14 @@ export async function go() {
   masterConfig.domain = masterConfig.domain.split("|").join("or")
 
 
-  if (fs.existsSync("../nginxOnTheFlySetup")) {
+  if (fs.existsSync(path.join(__dirname, "../../nginxOnTheFlySetup"))) {
     if (masterConfig.domain.endsWith(domainPostFix)) {
       let domainProjectName = masterConfig.domain.slice(0, -domainPostFix.length)
       if (domainProjectName !== masterConfig.name) {
-        fs.appendFileSync("../nginxOnTheFlySetup/domainProjectIndex", domainProjectName + "|" + masterConfig.name + "\n")
+        let pth = path.join(__dirname, "../../nginxOnTheFlySetup/domainProjectIndex")
+        let s = fs.readFileSync(pth).toString()
+        if (!s.endsWith("\n")) fs.appendFileSync(pth, "\n")
+        fs.appendFileSync(pth, domainProjectName + "|" + masterConfig.name + "\n")
       }
     }
   }
