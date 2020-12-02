@@ -7,12 +7,15 @@ import clone from "fast-copy"
 import createNginxConf from "./createNginxConf"
 import createAppConf from "./createAppConf"
 import xrray from "xrray"
+import fs from "fs"
 xrray(Array)
 
 const startPort = 5000
+const domainPostFix = ".maximilian.mairinger.com"
 
 export { createNginxConf } from "./createNginxConf"
 export { createAppConf } from "./createAppConf"
+
 
 export async function go() {
   const masterConfig = {
@@ -24,11 +27,26 @@ export async function go() {
     githubUsername: args.githubUsername
   }
   
+  masterConfig.domain = masterConfig.domain.split(".").map(s => slugify(s)).join(".")
+  // just in case slugify changes its behaviour
+  masterConfig.domain = masterConfig.domain.split("|").join("or")
+
+
+  if (fs.existsSync("../nginxOnTheFlySetup")) {
+    if (masterConfig.domain.endsWith(domainPostFix)) {
+      let domainProjectName = masterConfig.domain.slice(0, -domainPostFix.length)
+      if (domainProjectName !== masterConfig.name) {
+        fs.appendFileSync("../nginxOnTheFlySetup/domainProjectIndex", domainProjectName + "|" + masterConfig.name + "\n")
+      }
+    }
+  }
+  else console.warn("Optional dependency nginxOnTheFlySetup not found. Skipping integration")
+
+  
   
   const devConfig = clone(masterConfig);
   devConfig.domain = `dev.${devConfig.domain}`
   devConfig.branch = "dev";
-  
   
   
   
