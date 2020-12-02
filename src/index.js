@@ -27,7 +27,7 @@ export async function go() {
     githubUsername: args.githubUsername
   }
   
-  masterConfig.domain = masterConfig.domain.split(".").map(s => slugify(s)).join(".")
+  masterConfig.domain = masterConfig.domain.split(".").map(s => slugify(s)).join(".").toLowerCase()
   // just in case slugify changes its behaviour
   masterConfig.domain = masterConfig.domain.split("|").join("or")
 
