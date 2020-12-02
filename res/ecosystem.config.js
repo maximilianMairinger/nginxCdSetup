@@ -12,6 +12,7 @@ const configPresets = {
     exec_mode : "fork",
     instances: 1,
     wait_ready: true,
+    namespace: "repl",
     env: {
       port: "$[ port ]",
       inProd: false
@@ -26,6 +27,7 @@ const configPresets = {
     exec_mode : "fork",
     instances: 1,
     wait_ready: true,
+    namespace: "prod",
     env: {
       port: "$[ port ]",
       inProd: true
