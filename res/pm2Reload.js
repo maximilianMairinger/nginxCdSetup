@@ -35,7 +35,6 @@ function err(cb_keyword = () => {}) {
 
 let lastEcosystemConfigString = fs.existsSync(ecosystemCacheFileName) ? fs.readFileSync(ecosystemCacheFileName).toString() : "{}"
 let lastEcosystemConfig = JSON.parse(lastEcosystemConfigString)
-let ecosystemConfigString = JSON.stringify(ecosystemConfig)
 
 /*{
   script: "replServer/dist/server.js",
@@ -58,14 +57,7 @@ pm2.connect(err(() => {
       else pm2.start(ecosystemConfig, err("end"))
     }
     else {
-      if (nameList.includes(lastEcosystemConfig.name)) {
-        pm2.delete(lastEcosystemConfig.name, err(() => {
-          pm2.start(ecosystemConfig, err("end"))
-        }))
-      }
-      else {
-        pm2.start(ecosystemConfig, err("end"))
-      }
+      pm2.start(ecosystemConfig, err("end"))
     }
 
     fs.writeFileSync(ecosystemCacheFileName, JSON.stringify(ecosystemConfig))
