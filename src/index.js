@@ -19,77 +19,74 @@ export { createAppConf } from "./createAppConf"
 
 
 export async function go() {
-  const masterConfig = {
-    nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
-    appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
-    domain: args.domain,
-    name: args.name,
-    branch: "master",
-    githubUsername: args.githubUsername
-  }
+  try {
+    const masterConfig = {
+      nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
+      appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
+      domain: args.domain,
+      name: args.name,
+      branch: "master",
+      githubUsername: args.githubUsername
+    }
+    
+    masterConfig.domain = masterConfig.domain.split(".").map(s => slugify(s)).join(".").toLowerCase()
+    // just in case slugify changes its behaviour
+    masterConfig.domain = masterConfig.domain.split("|").join("or")
   
-  masterConfig.domain = masterConfig.domain.split(".").map(s => slugify(s)).join(".").toLowerCase()
-  // just in case slugify changes its behaviour
-  masterConfig.domain = masterConfig.domain.split("|").join("or")
-
-
-  if (fs.existsSync(path.join(__dirname, "../../nginxOnTheFlySetup"))) {
-    if (masterConfig.domain.endsWith(domainPostFix)) {
-      let domainProjectName = masterConfig.domain.slice(0, -domainPostFix.length)
-      if (domainProjectName !== masterConfig.name) {
-        let pth = path.join(__dirname, "../../nginxOnTheFlySetup/domainProjectIndex")
-        let s = fs.readFileSync(pth).toString()
-        if (!s.endsWith("\n")) fs.appendFileSync(pth, "\n")
-        fs.appendFileSync(pth, domainProjectName + "|" + masterConfig.name + "\n")
+  
+    if (fs.existsSync(path.join(__dirname, "../../nginxOnTheFlySetup"))) {
+      if (masterConfig.domain.endsWith(domainPostFix)) {
+        let domainProjectName = masterConfig.domain.slice(0, -domainPostFix.length)
+        if (domainProjectName !== masterConfig.name) {
+          let pth = path.join(__dirname, "../../nginxOnTheFlySetup/domainProjectIndex")
+          let s = fs.readFileSync(pth).toString()
+          if (!s.endsWith("\n")) fs.appendFileSync(pth, "\n")
+          fs.appendFileSync(pth, domainProjectName + "|" + masterConfig.name + "\n")
+        }
       }
     }
-  }
-  else console.warn("Optional dependency nginxOnTheFlySetup not found. Skipping integration")
-
+    else console.warn("Optional dependency nginxOnTheFlySetup not found. Skipping integration")
   
-  
-  const devConfig = clone(masterConfig);
-  devConfig.domain = `dev.${devConfig.domain}`
-  devConfig.branch = "dev";
-  
-  
-  
-  
-  let setupProm = setup(masterConfig).then(() => {
-    console.log("Setup done")
-  })
-  let portProm = detectPort(startPort).then((portMaster) => {
-    masterConfig.port = portMaster
-    return detectPort(portMaster+1).then((portDev) => {
-      devConfig.port = portDev
-      console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
+    
+    
+    const devConfig = clone(masterConfig);
+    devConfig.domain = `dev.${devConfig.domain}`
+    devConfig.branch = "dev";
+    
+    
+    
+    
+    let setupProm = setup(masterConfig).then(() => {
+      console.log("Setup done")
     })
-  })
+    let portProm = detectPort(startPort).then((portMaster) => {
+      masterConfig.port = portMaster
+      return detectPort(portMaster+1).then((portDev) => {
+        devConfig.port = portDev
+        console.log(`Ports found: master: ${portMaster}; dev: ${portDev}`)
+      })
+    })
+  
+  
+  
+    await Promise.all([setupProm, portProm])
 
 
 
-  await Promise.all([setupProm, portProm])
-
-
-  try {
-    // must be synchronous (because shell relies on current cd)
-    await createAppConf([masterConfig, devConfig])
-    await createNginxConf([masterConfig, devConfig])
-    console.log("Done")
-  } catch (e) {
-    console.log("Error: " + e.message)
-    console.log("Cmd: " + e.cmd)
-    console.log("Stderr: " + e.stderr)
+    try {
+      // must be synchronous (because shell relies on current cd)
+      await createAppConf([masterConfig, devConfig])
+      await createNginxConf([masterConfig, devConfig])
+      console.log("Done")
+    } catch (e) {
+      console.log("Error: " + e.message)
+      console.log("Cmd: " + e.cmd)
+      console.log("Stderr: " + e.stderr)
+    }
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  catch(e) {
+    console.error("Unknown error happend at the very beginning. Nothing happend yet.\n\n\n")
+    throw e
+  }  
 }
 

@@ -12,8 +12,7 @@ function writeToLogFile(log) {
   fs.appendFileSync("log", log + "\n")
 }
 
-function injectFsToLogLevel(level) {
-  const logLocal = console.log.bind(console)
+function injectFsToLogLevel(level, logLocal = console.log.bind(console)) {
   console[level] = (...logs) => {
     let formattedLogTime = formatLogTime(level, logs)
     let formattedLog = formatLog(level, logs)
@@ -25,6 +24,7 @@ function injectFsToLogLevel(level) {
 injectFsToLogLevel("log")
 injectFsToLogLevel("warn")
 injectFsToLogLevel("error")
+injectFsToLogLevel("throw", (e) => {throw e})
 
 
 try {
@@ -35,8 +35,11 @@ try {
   go().then(() => console.log("Done."))
 }
 catch(e) {
-  console.error("Thrown", e)
+  console.throw(e)
 }
+
+
+
 
 
 
