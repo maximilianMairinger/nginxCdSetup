@@ -8,6 +8,7 @@ import createNginxConf from "./createNginxConf"
 import createAppConf from "./createAppConf"
 import xrray from "xrray"
 import fs from "fs"
+import slugify from "slugify"
 xrray(Array)
 
 const startPort = 5000
