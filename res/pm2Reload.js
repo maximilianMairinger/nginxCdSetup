@@ -57,7 +57,14 @@ pm2.connect(err(() => {
       else pm2.start(ecosystemConfig, err("end"))
     }
     else {
-      pm2.start(ecosystemConfig, err("end"))
+      if (nameList.includes(lastEcosystemConfig.name)) {
+        pm2.delete(lastEcosystemConfig.name, err(() => {
+          pm2.start(ecosystemConfig, err("end"))
+        }))
+      }
+      else {
+        pm2.start(ecosystemConfig, err("end"))
+      }
     }
 
     fs.writeFileSync(ecosystemCacheFileName, JSON.stringify(ecosystemConfig))
