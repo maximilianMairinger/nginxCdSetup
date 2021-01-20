@@ -5,7 +5,7 @@ const ecosystemConfig = require("./ecosystem.config.js")
 const ecosystemCacheFileName = "./.ecosystemCache"
 
 
-function err(cb_keyword = () => {}) {
+function then(cb_keyword = () => {}) {
   if (typeof cb_keyword === "string" | cb_keyword instanceof Array) {
     if (cb_keyword === "end") cb_keyword = ["dump", "disconnect"]
 
@@ -13,14 +13,14 @@ function err(cb_keyword = () => {}) {
       if (error) {console.log("err", error); process.exit(2)}
       if (cb_keyword instanceof Array) {
         function rec() {
-          if (cb_keyword[0]) pm2[cb_keyword[0]](err(() => {
+          if (cb_keyword[0]) pm2[cb_keyword[0]](then(() => {
             cb_keyword.splice(0, 1);
             rec()
           }))
         }
         rec()
       }
-      else pm2[cb_keyword](err())
+      else pm2[cb_keyword](then())
       
     }
   }
@@ -45,25 +45,25 @@ let lastEcosystemConfig = JSON.parse(lastEcosystemConfigString)
   args: "--port $[ port ]"
 }*/
 
-pm2.connect(err(() => {
-  pm2.list(err((list) => {
+pm2.connect(then(() => {
+  pm2.list(then((list) => {
     let nameList = []
     list.forEach((e) => {
       nameList.push(e.name)
     })
 
     if (equals(ecosystemConfig, lastEcosystemConfig)) {
-      if (nameList.includes(ecosystemConfig.name)) pm2.reload(ecosystemConfig.name, err("end"))
-      else pm2.start(ecosystemConfig, err("end"))
+      if (nameList.includes(ecosystemConfig.name)) pm2.reload(ecosystemConfig.name, then("end"))
+      else pm2.start(ecosystemConfig, then("end"))
     }
     else {
       if (nameList.includes(lastEcosystemConfig.name)) {
-        pm2.delete(lastEcosystemConfig.name, err(() => {
-          pm2.start(ecosystemConfig, err("end"))
+        pm2.delete(lastEcosystemConfig.name, then(() => {
+          pm2.start(ecosystemConfig, then("end"))
         }))
       }
       else {
-        pm2.start(ecosystemConfig, err("end"))
+        pm2.start(ecosystemConfig, then("end"))
       }
     }
 
