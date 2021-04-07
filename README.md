@@ -5,3 +5,4 @@ Running on remote CD server. This script helps ctp setup a subdomain (including 
 ## Deployment
 
 This script on its own, gets continously deployed to the remote. Just commit and wait for the workflow to finish.
+
