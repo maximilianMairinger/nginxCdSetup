@@ -21,8 +21,8 @@ xrray(Array)
 
 export async function createNginxConf(configs, progressCb, errorCb) {
   if (!(configs instanceof Array)) configs = [configs]
-  const log = progressCb ? (...a) => {console.log(...a); progressCb(...a)} : console.log.bind(console);
-  const err = errorCb ? (...a) => {console.error(...a); errorCb(...a)} : console.error.bind(console);
+  const log = progressCb ? progressCb : console.log.bind(console);
+  const err = errorCb ? errorCb : console.error.bind(console);
 
   
   

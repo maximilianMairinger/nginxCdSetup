@@ -25,7 +25,7 @@ const pm2ReloadJsTemplate = fss.readFileSync(path.join(__dirname, "../res/pm2Rel
 
 export async function createAppConf(configs, progressCb) {
   if (!(configs instanceof Array)) configs = [configs]
-  const log = progressCb ? (...a) => {console.log(...a); progressCb(...a)} : console.log.bind(console);
+  const log = progressCb ? progressCb : console.log.bind(console);
 
 
   configs.ea((conf) => {
