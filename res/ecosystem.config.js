@@ -15,7 +15,9 @@ const configPresets = {
     namespace: "repl",
     env: {
       port: "$[ port ]",
-      inProd: false
+      inProd: false,
+      // some libs like express use this to determin if they should publicly print debug logs
+      NODE_ENV: "production"
     },
     args: "--port $[ port ]"
   },
@@ -30,7 +32,8 @@ const configPresets = {
     namespace: "prod",
     env: {
       port: "$[ port ]",
-      inProd: true
+      inProd: true,
+      NODE_ENV: "production"
     },
     args: "--port $[ port ]"
   }
