@@ -31,7 +31,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           cd ~/nginxCdSetup
           git pull
