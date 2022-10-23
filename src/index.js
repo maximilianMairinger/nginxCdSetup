@@ -39,7 +39,16 @@ export async function go() {
         let domainProjectName = masterConfig.domain.slice(0, -domainPostFix.length)
         if (domainProjectName !== masterConfig.name) {
           let pth = path.join(__dirname, "../../nginxOnTheFlySetup/domainProjectIndex")
-          let s = fs.readFileSync(pth).toString()
+          let s
+          try {
+            s = fs.readFileSync(pth).toString()
+          }
+          catch(e) {
+            s = ""
+            console.warn("Did not find domainProjectIndex, is this your first invocation? Please enter all already existing (or manually added projects if your migrating) manually to this list (in nginxOnTheFlySetup/domainProjectIndex). We will continue here with a newly created list and add the current project as first entry.")
+            fs.writeFileSync(pth, s)
+          }
+          
           if (!s.endsWith("\n")) fs.appendFileSync(pth, "\n")
           fs.appendFileSync(pth, domainProjectName + "|" + masterConfig.name + "\n")
         }
