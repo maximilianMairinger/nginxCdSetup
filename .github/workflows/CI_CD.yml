@@ -38,4 +38,4 @@ jobs:
           nvm use default
           npm i
           npm run build --if-present
-          pm2 reload nginxOnTheFlySetup
+          npx --yes pm2 reload nginxOnTheFlySetup
