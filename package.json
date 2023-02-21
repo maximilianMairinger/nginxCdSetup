@@ -23,6 +23,7 @@
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
+    "pm2": "^5.2.2",
     "rollup": "^2.26.2"
   }
 }
