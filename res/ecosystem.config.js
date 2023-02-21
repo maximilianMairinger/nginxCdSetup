@@ -6,6 +6,7 @@ const configFilePath = ".deploy"
 const configPresets = {
   repl: {
     script: "replServer/dist/server.js",
+    log_date_format : "DD.MM.YYYY @ HH:mm:ss Z",
     merge_logs: true,
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
@@ -23,6 +24,7 @@ const configPresets = {
   },
   prod: {
     script: "server/dist/server.js",
+    log_date_format : "DD.MM.YYYY @ HH:mm:ss Z",
     merge_logs: true,
     max_restarts: 50,
     name: "$[ branch / hash ].$[ name ]",
