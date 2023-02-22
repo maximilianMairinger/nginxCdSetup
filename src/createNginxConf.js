@@ -16,7 +16,8 @@ xrray(Array)
 //   branch: "master"
 //   hash: "commithash",
 //   githubUsername: "",
-//   port: 6500
+//   port: 6500,
+//   dontSsl: false
 // }
 
 export async function createNginxConf(configs, progressCb, errorCb) {
@@ -60,17 +61,27 @@ export async function createNginxConf(configs, progressCb, errorCb) {
   // try to manually activate a certbot certificate for server 4 and 5
 
   try {
-    log(`Obtaining ssl certificate...`)
     
-
+    
+    let someOneWantsSsl = false
     let domainCliParam = ""
     configs.ea((conf) => {
+      if (conf.dontSsl) return
+      someOneWantsSsl = true
       if (conf.shortDomain !== undefined) domainCliParam += `-d ${conf.shortDomain} `
       domainCliParam += `-d ${conf.domain} `
     })
-  
+
+
+    if (someOneWantsSsl) {
+      log(`Obtaining ssl certificate...`)
+      $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check crt.sh/?q=maximilian.mairinger.com.`)
+    }
+    else {
+      log(`No ssl certificate requested. Continuing as http client.`)
+    }
    
-    $(`cd ${path.join(sitesAvailable)} && certbot --nginx ${domainCliParam}--redirect --reinstall`, `Unable to obtain ssl certificate for domain(s) ${configs.Inner("domain").toString()} from letsEncrypt registry. Maybe you've hit a rate limit? Check crt.sh/?q=maximilian.mairinger.com.`)
+    
   }
   catch(e) {
     err("Unable to obtain certificat. Maybe you've hit a rate limit? Continuing as http client anyway")
