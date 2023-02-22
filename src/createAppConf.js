@@ -52,6 +52,12 @@ export async function createAppConf(configs, progressCb) {
       $(`cd ${conf.dir} && git checkout ${conf.hash}`, `The commit hash <i>${conf.hash}</i> does not exist on repository ${conf.name} of user ${conf.githubUsername}.`)
       $(`cd ${conf.dir} && git reset --hard`)
     }
+    try {
+      $(`cd ${conf.dir} && git lfs pull`, `Unable to pull lfs files for <i title="${conf.modifier}">${conf.name}</i>`)
+    }
+    catch (e) {
+      error(`Continuing without lfs, this may cause issues later when trying to compress images`)
+    }
 
     
     
