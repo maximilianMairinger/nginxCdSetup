@@ -65,7 +65,16 @@ export async function createAppConf(configs, progressCb) {
   })
 
 
+  log(`Configuring pm2...`)
+
+  let proms = []
+  configs.ea((conf) => {
+    proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf).get()))
+    proms.add(fs.writeFile(path.join(conf.dir, "pm2Reload.js"), resolveTemplate(pm2ReloadJsTemplate, conf).get()))
+  })
   
+  await Promise.all(proms)
+
 
   configs.ea((conf) => {
     log(`Installing dependencies for <i title="${conf.modifier}">${conf.name}</i>...`)
@@ -74,16 +83,7 @@ export async function createAppConf(configs, progressCb) {
     $(`cd ${conf.dir} && npm run build --if-present`)
   })
 
-
-  log(`Configuring pm2...`)
-
-  let proms = []
-  configs.ea((conf) => {
-    proms.add(fs.writeFile(path.join(conf.dir, "ecosystem.config.js"), resolveTemplate(ecosystemConfigJsTemplate, conf).get()))
-    proms.add(fs.writeFile(path.join(conf.dir, "pm2Reload.js"), resolveTemplate(pm2ReloadJsTemplate, conf).get()))
-  })
-
-  await Promise.all(proms)
+  
 
   log(`Starting pm2 threads...`)
 
