@@ -21,6 +21,7 @@ export { createAppConf } from "./createAppConf"
 export async function go() {
   try {
     const masterConfig = {
+      noBuild: true,
       nginxDest: args.nginxConfDestination ? path.resolve(args.nginxConfDestination) : "/etc/nginx",
       appDest: args.appDestination ? path.resolve(args.appDestination) : "/var/www/html",
       domain: args.domain,
