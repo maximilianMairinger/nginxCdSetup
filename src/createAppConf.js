@@ -85,9 +85,12 @@ export async function createAppConf(configs, progressCb) {
     }
     else {
       log(`Skipping build for <i title="${conf.modifier}">${conf.name}</i>...`)
+      fss.writeFileSync(path.join(conf.dir, "replServer/dist/server.js"), fss.readFileSync(path.join(__dirname, "../res/tmpServer.js")).toString())
     }
     
   })
+
+
 
   
 
