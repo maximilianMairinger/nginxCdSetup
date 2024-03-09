@@ -1,4 +1,8 @@
 const fs = require("fs")
+const currentGitBranch = require("current-git-branch")
+const gitBranch = currentGitBranch()
+
+const defaultPreset = gitBranch === "master" || gitBranch === "stable" ? "prod" : "repl"
 
 const configFilePath = ".deploy"
 
@@ -80,7 +84,8 @@ if (fs.existsSync(configFilePath)) {
   }
   
 }
-else config = configPresets.repl
+else config = configPresets[defaultPreset]
+
 
 
 
