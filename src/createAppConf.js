@@ -95,12 +95,17 @@ export async function createAppConf(configs, progressCb) {
 
   
 
-  log(`Starting pm2 threads...`)
+  if (!conf.noBuild) {
+    log(`Starting pm2 threads...`)
 
-  configs.ea((conf) => {
-    $(`cd ${conf.dir} && pm2 start ecosystem.config.js`, `Unable to start pm2 for <i title="${conf.modifier}">${conf.name}</i>`)
-  })
-
+    configs.ea((conf) => {
+      $(`cd ${conf.dir} && pm2 start ecosystem.config.js`, `Unable to start pm2 for <i title="${conf.modifier}">${conf.name}</i>`)
+    })
+  }
+  else {
+    log(`Skipping pm2 threads start... Will happen on first build by github action`)
+  }
+  
   log(`Done with app installation`)
 }
 export default createAppConf
