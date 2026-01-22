@@ -78,7 +78,7 @@ export async function createAppConf(configs, progressCb) {
 
   configs.ea((conf) => {
     log(`Installing dependencies for <i title="${conf.modifier}">${conf.name}</i>...`)
-    $(`cd ${conf.dir} && pnpm i`, `While installing dependencies`)
+    $(`cd ${conf.dir} && pnpm i --shamefully-hoist`, `While installing dependencies`)
     if (!conf.noBuild) {
       log(`Building <i title="${conf.modifier}">${conf.name}</i>...`)
       $(`cd ${conf.dir} && npm run build --if-present`)
